@@ -1,0 +1,79 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '4.0.2'
+}
+
+group 'dev.markusk'
+version '0.0.5'
+
+sourceCompatibility = 1.11
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    implementation project(':util-module')
+    implementation project(':database-module')
+    implementation project(':fetcher-api')
+
+    implementation 'com.apptastic:rssreader:2.2.0' //https://github.com/w3stling/rssreader
+    implementation 'org.jsoup:jsoup:1.12.1'
+
+    // https://mvnrepository.com/artifact/io.prometheus/simpleclient_httpserver
+    implementation group: 'io.prometheus', name: 'simpleclient_httpserver', version: '0.8.1'
+
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+}
+
+task sourcesForRelease(type: Copy) {
+    from 'src/main/java'
+    into 'build/filteredSrc'
+    filter(ReplaceTokens, tokens: [VERSION: version, DATE: getBuildDate(), TIME: getBuildTime()])
+}
+
+static def getBuildDate() {
+    return new Date().format('yyyy/MM/dd')
+}
+
+static def getBuildTime() {
+    return new Date().format('HH:mm:ss')
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    source = sourcesForRelease.destinationDir
+    classpath = sourceSets.main.compileClasspath
+    dependsOn sourcesForRelease
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier.set('sources')
+    from "${buildDir}/filteredSrc"
+}
+
+jar {
+    archivesBaseName = project.name
+}
+
+shadowJar {
+    archiveClassifier.set('withDependencies')
+}
+
+build {
+    dependsOn clean
+    dependsOn jar
+    dependsOn sourcesJar
+    dependsOn shadowJar
+
+    jar.mustRunAfter clean
+    shadowJar.mustRunAfter sourcesJar
+}
+
