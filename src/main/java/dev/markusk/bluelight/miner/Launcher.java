@@ -3,7 +3,6 @@ package dev.markusk.bluelight.miner;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Launcher {
@@ -17,8 +16,6 @@ public class Launcher {
         "| |_/ / | (_| | |_| | | | (__| | | | |_       | |  | | | | | |  __/ |       __/_|_\\__ \n" +
         "\\____/|_|\\__,_|\\__,_|_|_|\\___|_| |_|\\__|      \\_|  |_/_|_| |_|\\___|_|      [(o)_R_(o)] \n" +
         "                                                              by Markus.\n");
-    final WebsiteMiner websiteMiner = new WebsiteMiner(optionSet);
-    websiteMiner.initialize();
   }
 
   public static void main(String[] args) {
@@ -38,9 +35,6 @@ public class Launcher {
   private static OptionParser createOptionParser() {
     final OptionParser optionParser = new OptionParser();
     optionParser.accepts("debug", "Enables the debug mode");
-    optionParser.accepts("dir", "Selects work dir").withRequiredArg().ofType(File.class).defaultsTo(new File("work"));
-    optionParser.accepts("index-dir", "Selects index dir").withRequiredArg().ofType(File.class)
-        .defaultsTo(new File("article_index"));
     optionParser.accepts("help", "See help");
     return optionParser;
   }

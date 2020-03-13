@@ -24,7 +24,6 @@ dependencies {
     implementation project(':database-module')
     implementation project(':fetcher-api')
 
-    implementation 'com.apptastic:rssreader:2.2.0' //https://github.com/w3stling/rssreader
     implementation 'org.jsoup:jsoup:1.12.1'
 
     // https://mvnrepository.com/artifact/io.prometheus/simpleclient_httpserver
