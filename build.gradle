@@ -23,8 +23,6 @@ dependencies {
     implementation project(':database-module')
     implementation project(':fetcher-api')
 
-    implementation 'org.jsoup:jsoup:1.12.1'
-
     // https://mvnrepository.com/artifact/io.prometheus/simpleclient_httpserver
     implementation group: 'io.prometheus', name: 'simpleclient_httpserver', version: '0.8.1'
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
