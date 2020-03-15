@@ -36,7 +36,8 @@ public class DownloadJob implements AbstractJob {
     final String fileIdentification = this.getFileIdentification();
     final Extractor extractor = this.miner.getExtractorRegistry().getExtractor(this.baseInfo.getTargetUid());
 
-    final String id = extractor.getIdFromUrl(this.baseInfo.getUrl());
+    String id = extractor.getIdFromUrl(this.baseInfo.getUrl());
+    if (id == null) id = extractor.getUniqueId();
 
     final Article article = new ArticleBuilder().id(id).url(this.baseInfo.getUrl()).title(this.baseInfo.getTitle())
         .fetchTime(this.baseInfo.getFetchTime()).releaseTime(this.baseInfo.getReleaseTime())
