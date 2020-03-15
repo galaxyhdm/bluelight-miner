@@ -2,6 +2,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id 'java'
+    id 'java-library'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
 }
 
@@ -9,6 +10,8 @@ group 'dev.markusk'
 version '0.0.5'
 
 sourceCompatibility = 1.11
+
+String mainClassName = 'dev.markusk.bluelight.miner.Launcher'
 
 repositories {
     mavenCentral()
@@ -19,14 +22,16 @@ repositories {
 }
 
 dependencies {
-    implementation project(':util-module')
     implementation project(':database-module')
     implementation project(':fetcher-api')
+    implementation project(':util-module')
 
     // https://mvnrepository.com/artifact/io.prometheus/simpleclient_httpserver
     implementation group: 'io.prometheus', name: 'simpleclient_httpserver', version: '0.8.1'
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
-    compile group: 'org.yaml', name: 'snakeyaml', version: '1.26'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.26'
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
 
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
@@ -60,6 +65,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
     archivesBaseName = project.name
+    manifest {
+        attributes('Implementation-Version': archiveVersion, 'Main-Class': mainClassName)
+    }
 }
 
 shadowJar {

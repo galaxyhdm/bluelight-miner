@@ -16,6 +16,8 @@ public class Launcher {
         "| |_/ / | (_| | |_| | | | (__| | | | |_       | |  | | | | | |  __/ |       __/_|_\\__ \n" +
         "\\____/|_|\\__,_|\\__,_|_|_|\\___|_| |_|\\__|      \\_|  |_/_|_| |_|\\___|_|      [(o)_R_(o)] \n" +
         "                                                              by Markus.\n");
+    final Miner miner = new Miner(optionSet);
+    miner.initialize();
   }
 
   public static void main(String[] args) {
