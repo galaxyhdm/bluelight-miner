@@ -6,8 +6,8 @@ import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.job.AbstractJob;
 import dev.markusk.bluelight.api.job.JobPriority;
 import dev.markusk.bluelight.api.objects.Article;
-import dev.markusk.bluelight.miner.Environment;
 import dev.markusk.bluelight.miner.Miner;
+import dev.markusk.bluelight.miner.config.TargetConfiguration;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +35,7 @@ public class DownloadJob implements AbstractJob {
   public void run() {
     final String fileIdentification = this.getFileIdentification();
     final Extractor extractor = this.miner.getExtractorRegistry().getExtractor(this.baseInfo.getTargetUid());
+    final TargetConfiguration configuration = this.miner.getConfiguration(this.baseInfo.getTargetUid());
 
     String id = extractor.getIdFromUrl(this.baseInfo.getUrl());
     if (id == null) id = extractor.getUniqueId();
@@ -46,7 +47,7 @@ public class DownloadJob implements AbstractJob {
     String[] commandArray =
         {"curl", this.baseInfo.getUrl(), "-o", article.getFileIdentification() + ".html"};
 
-    if (Environment.TOR) { // TODO: 15.03.2020 update to get info from TargetConfiguration
+    if (configuration.isTor()) {
       String[] torCommand = {"torsocks", "-i"};
       commandArray = Stream.of(torCommand, commandArray).flatMap(Stream::of).toArray(String[]::new);
     }

@@ -7,9 +7,13 @@ import java.util.HashMap;
 public class ExtractorRegistry {
 
   private final HashMap<String, Extractor> extractorMap;
+  private final Extractor defaultExtractor;
 
-  public ExtractorRegistry() {
+  public ExtractorRegistry(Extractor defaultExtractor) {
     this.extractorMap = new HashMap<>();
+    this.defaultExtractor = defaultExtractor;
+    if (this.defaultExtractor == null)
+      throw new NullPointerException("defaultExtractor is null!");
   }
 
   public void addExtractor(final String targetId, final Extractor extractor) {
@@ -24,8 +28,13 @@ public class ExtractorRegistry {
     return this.extractorMap;
   }
 
-  public Extractor getExtractor(final String targetUid){
-    return this.extractorMap.get(targetUid);
+  /**
+   * @param targetUid the targetUid for the extractor
+   * @return the provided {@link Extractor} or when the result is null return the {@link dev.markusk.bluelight.miner.extractor.DefaultExtractor}
+   */
+  public Extractor getExtractor(final String targetUid) {
+    final Extractor result = this.extractorMap.get(targetUid);
+    return result == null ? this.defaultExtractor : result;
   }
 
 }

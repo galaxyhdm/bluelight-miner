@@ -3,9 +3,9 @@ package dev.markusk.bluelight.miner.config;
 public class TargetConfiguration {
 
   private String fetchUrl;
-  private int updateTime;
-  private boolean tor;
-  private boolean autoIndex;
+  private Integer updateTime;
+  private Boolean tor;
+  private Boolean autoIndex;
 
   /**
    * 1 = locations
@@ -19,7 +19,8 @@ public class TargetConfiguration {
    * - 6 = topic + content
    * - 7 = location + topic + content
    */
-  private byte indexType;
+  private Byte indexType;
+  private String extractorPath;
 
   public String getFetchUrl() {
     return fetchUrl;
@@ -59,5 +60,13 @@ public class TargetConfiguration {
 
   public void setIndexType(final byte indexType) {
     this.indexType = indexType;
+  }
+
+  public String getExtractorPath() {
+    return extractorPath;
+  }
+
+  public void setExtractorPath(final String extractorPath) {
+    this.extractorPath = extractorPath;
   }
 }
