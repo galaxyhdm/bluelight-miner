@@ -3,6 +3,7 @@ package dev.markusk.bluelight.miner;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Launcher {
@@ -38,6 +39,7 @@ public class Launcher {
     final OptionParser optionParser = new OptionParser();
     optionParser.accepts("debug", "Enables the debug mode");
     optionParser.accepts("help", "See help");
+    optionParser.accepts("dir", "Selects work dir").withRequiredArg().ofType(File.class).defaultsTo(new File("work"));
     return optionParser;
   }
 

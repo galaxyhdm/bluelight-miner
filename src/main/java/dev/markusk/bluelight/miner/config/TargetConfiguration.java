@@ -21,6 +21,7 @@ public class TargetConfiguration {
    */
   private Byte indexType;
   private String extractorPath;
+  private String workDir;
 
   public String getFetchUrl() {
     return fetchUrl;
@@ -68,5 +69,13 @@ public class TargetConfiguration {
 
   public void setExtractorPath(final String extractorPath) {
     this.extractorPath = extractorPath;
+  }
+
+  public String getWorkDir() {
+    return workDir;
+  }
+
+  public void setWorkDir(final String workDir) {
+    this.workDir = workDir;
   }
 }

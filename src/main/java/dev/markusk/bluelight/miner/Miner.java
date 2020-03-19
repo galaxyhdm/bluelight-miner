@@ -28,6 +28,7 @@ public class Miner implements AbstractFetcher {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private final OptionSet optionSet;
+  private File workDir;
 
   private Configuration configuration;
   private ConsoleController consoleController;
@@ -59,6 +60,10 @@ public class Miner implements AbstractFetcher {
     if (this.running) return;
     this.running = true;
     this.setupConsole();
+    //Create work dir
+    this.workDir = (File) optionSet.valueOf("dir");
+    if (!workDir.exists())
+      LOGGER.info(workDir.mkdirs());
 
     this.configuration = this.loadConfig();
 
@@ -82,6 +87,11 @@ public class Miner implements AbstractFetcher {
       final RssFetcher rssFetcher = new RssFetcher();
       rssFetcher.initialize(s, targetConfiguration.getFetchUrl(), targetConfiguration.getUpdateTime());
       this.fetcherRegistry.addInfoFetcher(rssFetcher);
+
+      //Create workDirs
+      final File file = new File(this.workDir, targetConfiguration.getWorkDir());
+      if (!file.exists())
+        LOGGER.info(String.format("Created work dir for %s: %s", s, file.mkdirs()));
     });
   }
 
