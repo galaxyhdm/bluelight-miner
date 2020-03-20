@@ -45,7 +45,7 @@ public class DownloadJob implements AbstractJob {
         .fileIdentification(fileIdentification).createArticle();
 
     String[] commandArray =
-        {"curl", this.baseInfo.getUrl(), "-o", article.getFileIdentification() + ".html"};
+        {"curl", this.baseInfo.getUrl(), "-L", "-o", article.getFileIdentification() + ".html"};
 
     if (configuration.isTor()) {
       String[] torCommand = {"torsocks", "-i"};

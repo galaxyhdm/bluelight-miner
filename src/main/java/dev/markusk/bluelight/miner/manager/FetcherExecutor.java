@@ -2,6 +2,7 @@ package dev.markusk.bluelight.miner.manager;
 
 import dev.markusk.bluelight.api.AbstractInfoFetcher;
 import dev.markusk.bluelight.api.handler.JobHandler;
+import dev.markusk.bluelight.miner.Constants;
 import dev.markusk.bluelight.miner.Miner;
 import dev.markusk.bluelight.miner.job.FetcherJob;
 import io.prometheus.client.Histogram;
@@ -35,7 +36,7 @@ public class FetcherExecutor {
     final FetcherJob fetcherJob = new FetcherJob(this.miner, infoFetcher);
     this.jobMap.put(infoFetcher.getTargetUid(), fetcherJob);
     this.registerHandler(fetcherJob);
-    this.timer.scheduleAtFixedRate(fetcherJob, 100, minutesToMillis(infoFetcher.getUpdateTime()));
+    this.timer.schedule(fetcherJob, 100*getRandomNumberInRange(1, 5), minutesToMillis(infoFetcher.getUpdateTime()));
   }
 
   private void registerHandler(FetcherJob job) {
@@ -61,6 +62,14 @@ public class FetcherExecutor {
 
   public void stop() {
     this.timer.cancel();
+  }
+
+  private int getRandomNumberInRange(int min, int max) {
+
+    if (min >= max) {
+      throw new IllegalArgumentException("max must be greater than min");
+    }
+    return Constants.RANDOM.nextInt((max - min) + 1) + min;
   }
 
 }

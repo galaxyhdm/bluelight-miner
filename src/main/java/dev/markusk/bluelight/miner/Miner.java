@@ -4,6 +4,7 @@ import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.impl.RssFetcher;
 import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.miner.config.Configuration;
+import dev.markusk.bluelight.miner.config.DataStore;
 import dev.markusk.bluelight.miner.config.TargetConfiguration;
 import dev.markusk.bluelight.miner.extractor.DefaultExtractor;
 import dev.markusk.bluelight.miner.manager.ExtractorRegistry;
@@ -41,6 +42,9 @@ public class Miner implements AbstractFetcher {
   private FetcherExecutor fetcherExecutor;
   private ExtractorRegistry extractorRegistry;
 
+  //Config
+  private DataStore dataStore;
+
   private boolean running;
 
   public Miner(final OptionSet optionSet) {
@@ -65,6 +69,9 @@ public class Miner implements AbstractFetcher {
     if (!workDir.exists())
       LOGGER.info(workDir.mkdirs());
 
+    this.dataStore = new DataStore(new File(this.workDir, "lastUrls.json"));
+    this.dataStore.loadMap();
+
     this.configuration = this.loadConfig();
 
     this.downloadScheduler = new DownloadScheduler();
@@ -87,11 +94,13 @@ public class Miner implements AbstractFetcher {
       final RssFetcher rssFetcher = new RssFetcher();
       rssFetcher.initialize(s, targetConfiguration.getFetchUrl(), targetConfiguration.getUpdateTime());
       this.fetcherRegistry.addInfoFetcher(rssFetcher);
+      LOGGER.info("Loaded Fetcher: " + s);
 
       //Create workDirs
       final File file = new File(this.workDir, targetConfiguration.getWorkDir());
-      if (!file.exists())
+      if (!file.exists()) {
         LOGGER.info(String.format("Created work dir for %s: %s", s, file.mkdirs()));
+      }
     });
   }
 
@@ -138,10 +147,14 @@ public class Miner implements AbstractFetcher {
   }
 
   public DownloadScheduler getDownloadScheduler() {
-    return downloadScheduler;
+    return this.downloadScheduler;
   }
 
   public TargetConfiguration getConfiguration(final String targetUid) {
     return this.configuration.getTargets().get(targetUid);
+  }
+
+  public DataStore getDataStore() {
+    return this.dataStore;
   }
 }

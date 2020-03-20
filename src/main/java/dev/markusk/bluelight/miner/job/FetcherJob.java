@@ -30,8 +30,8 @@ public class FetcherJob extends TimerTask {
     if (this.jobHandler != null) this.jobHandler.onStart();
     try {
       final List<BaseFetchInfo> fetchInfos = this.infoFetcher.getFetchInfos();
-      // TODO: 15.03.2020 sort for not fetched urls or ids
-      final String lastUrl = ""; // TODO: 17.03.2020 get from json dump
+      final String lastUrl =
+          this.miner.getDataStore().getLastUrl(this.infoFetcher.getTargetUid());
       final List<BaseFetchInfo> baseFetchInfos = this.getFilteredInfos(fetchInfos, lastUrl);
       baseFetchInfos.forEach(baseFetchInfo -> {
         this.miner.getDownloadScheduler()
@@ -39,8 +39,12 @@ public class FetcherJob extends TimerTask {
       });
 
       LOGGER.info(this.infoFetcher.getTargetUid() + " | New article count: " + baseFetchInfos.size());
-      if (baseFetchInfos.size() > 0)
-        LOGGER.info(this.infoFetcher.getTargetUid() + " | lastUrl=" + baseFetchInfos.get(0).getUrl());
+      if (baseFetchInfos.size() > 0) {
+        final String lastFetchedUrl = baseFetchInfos.get(0).getUrl();
+        LOGGER.info(this.infoFetcher.getTargetUid() + " | lastUrl=" + lastFetchedUrl);
+        this.miner.getDataStore().setLastUrl(this.infoFetcher.getTargetUid(), lastFetchedUrl);
+        this.miner.getDataStore().saveMap();
+      }
     } catch (Exception e) {
       LOGGER.error(String.format("Error while fetching infos from: %s", this.infoFetcher.getTargetUid()), e);
     }
