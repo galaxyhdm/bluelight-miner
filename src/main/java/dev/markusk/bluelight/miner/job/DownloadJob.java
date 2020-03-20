@@ -53,7 +53,6 @@ public class DownloadJob implements AbstractJob {
     }
 
     LOGGER.debug(baseInfo.getTargetUid() + " | " + Arrays.toString(commandArray));
-    LOGGER.info(article.getId());
   }
 
   private String getFileIdentification() {
