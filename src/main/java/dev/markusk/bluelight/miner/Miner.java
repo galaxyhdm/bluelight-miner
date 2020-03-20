@@ -3,6 +3,7 @@ package dev.markusk.bluelight.miner;
 import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.impl.RssFetcher;
 import dev.markusk.bluelight.api.interfaces.Extractor;
+import dev.markusk.bluelight.api.util.Utils;
 import dev.markusk.bluelight.miner.config.Configuration;
 import dev.markusk.bluelight.miner.config.DataStore;
 import dev.markusk.bluelight.miner.config.TargetConfiguration;
@@ -22,7 +23,6 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 public class Miner implements AbstractFetcher {
 
@@ -89,7 +89,7 @@ public class Miner implements AbstractFetcher {
 
   private void loadFetcher() {
     this.configuration.getTargets().forEach((s, targetConfiguration) -> {
-      final Extractor extractor = getExtractor(targetConfiguration.getExtractorPath());
+      final Extractor extractor = Utils.getExtractor(targetConfiguration.getExtractorPath());
       this.extractorRegistry.addExtractor(s, extractor);
       final RssFetcher rssFetcher = new RssFetcher();
       rssFetcher.initialize(s, targetConfiguration.getFetchUrl(), targetConfiguration.getUpdateTime());
@@ -117,16 +117,6 @@ public class Miner implements AbstractFetcher {
     return null;
   }
 
-  private Extractor getExtractor(final String path) {
-    try {
-      final Class<?> aClass = Class.forName(path);
-      final Object o = aClass.getDeclaredConstructor().newInstance();
-      if (o instanceof Extractor) return (Extractor) o;
-    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      LOGGER.error("Error", e);
-    }
-    return null;
-  }
 
   private void setupConsole() {
     this.consoleController =
@@ -154,7 +144,15 @@ public class Miner implements AbstractFetcher {
     return this.configuration.getTargets().get(targetUid);
   }
 
+  public Configuration getConfiguration() {
+    return configuration;
+  }
+
   public DataStore getDataStore() {
     return this.dataStore;
+  }
+
+  public File getWorkDir() {
+    return workDir;
   }
 }

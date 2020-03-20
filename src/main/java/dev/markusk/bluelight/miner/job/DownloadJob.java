@@ -6,13 +6,17 @@ import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.job.AbstractJob;
 import dev.markusk.bluelight.api.job.JobPriority;
 import dev.markusk.bluelight.api.objects.Article;
+import dev.markusk.bluelight.miner.Constants;
 import dev.markusk.bluelight.miner.Miner;
 import dev.markusk.bluelight.miner.config.TargetConfiguration;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class DownloadJob implements AbstractJob {
@@ -45,7 +49,8 @@ public class DownloadJob implements AbstractJob {
         .fileIdentification(fileIdentification).createArticle();
 
     String[] commandArray =
-        {"curl", this.baseInfo.getUrl(), "-L", "-o", article.getFileIdentification() + ".html"};
+        {"curl", "-A", "'" + pickUserAgent() + "'", this.baseInfo.getUrl(), "-L", "-o",
+            article.getFileIdentification() + ".html"};
 
     if (configuration.isTor()) {
       String[] torCommand = {"torsocks", "-i"};
@@ -53,6 +58,15 @@ public class DownloadJob implements AbstractJob {
     }
 
     LOGGER.debug(baseInfo.getTargetUid() + " | " + Arrays.toString(commandArray));
+
+    try {
+      final Process process =
+          new ProcessBuilder(commandArray).redirectErrorStream(true)
+              .directory(new File(this.miner.getWorkDir(), configuration.getWorkDir())).start();
+      process.waitFor();
+    } catch (IOException | InterruptedException e) {
+      LOGGER.error("Error while downloading", e);
+    }
   }
 
   private String getFileIdentification() {
@@ -70,6 +84,11 @@ public class DownloadJob implements AbstractJob {
   @Override
   public JobPriority getPriority() {
     return this.priority;
+  }
+
+  private String pickUserAgent() {
+    final List<String> userAgents = this.miner.getConfiguration().getUserAgents();
+    return userAgents.get(Constants.RANDOM.nextInt(userAgents.size()));
   }
 
 }
