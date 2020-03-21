@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static dev.markusk.bluelight.miner.Environment.*;
+
 public class Miner implements AbstractFetcher {
 
   private static final Logger LOGGER = LogManager.getLogger();
@@ -53,7 +55,10 @@ public class Miner implements AbstractFetcher {
     final HTTPServer httpServer;
     try {
       httpServer = new HTTPServer(8080);
-      Runtime.getRuntime().addShutdownHook(new Thread(httpServer::stop));
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        httpServer.stop();
+        this.downloadScheduler.closeScheduler();
+      }));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -64,6 +69,11 @@ public class Miner implements AbstractFetcher {
     if (this.running) return;
     this.running = true;
     this.setupConsole();
+    LOGGER.info("NO_FETCH=" + NO_FETCH + " DEBUG=" + DEBUG + " POOL_SIZE=" + POOL_SIZE);
+    LOGGER.info(String
+        .format("Starting miner... (Version Nr. %s built on %s at %s)", VersionInfo.VERSION, VersionInfo.BUILD_DATE,
+            VersionInfo.BUILD_TIME));
+
     //Create work dir
     this.workDir = (File) optionSet.valueOf("dir");
     if (!workDir.exists())

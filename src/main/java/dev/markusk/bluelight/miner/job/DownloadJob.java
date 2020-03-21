@@ -67,6 +67,8 @@ public class DownloadJob implements AbstractJob {
     } catch (IOException | InterruptedException e) {
       LOGGER.error("Error while downloading", e);
     }
+
+    // TODO: 21.03.2020 add extract job
   }
 
   private String getFileIdentification() {

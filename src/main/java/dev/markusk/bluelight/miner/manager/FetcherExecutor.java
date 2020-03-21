@@ -36,7 +36,7 @@ public class FetcherExecutor {
     final FetcherJob fetcherJob = new FetcherJob(this.miner, infoFetcher);
     this.jobMap.put(infoFetcher.getTargetUid(), fetcherJob);
     this.registerHandler(fetcherJob);
-    this.timer.schedule(fetcherJob, 100*getRandomNumberInRange(1, 5), minutesToMillis(infoFetcher.getUpdateTime()));
+    this.timer.schedule(fetcherJob, 100*getRandomNumberInRange(1, 10), minutesToMillis(infoFetcher.getUpdateTime()));
   }
 
   private void registerHandler(FetcherJob job) {
