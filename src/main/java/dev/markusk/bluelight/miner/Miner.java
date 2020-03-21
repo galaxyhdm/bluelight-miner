@@ -12,6 +12,7 @@ import dev.markusk.bluelight.miner.manager.ExtractorRegistry;
 import dev.markusk.bluelight.miner.manager.FetcherExecutor;
 import dev.markusk.bluelight.miner.manager.FetcherRegistry;
 import dev.markusk.bluelight.miner.queue.DownloadScheduler;
+import dev.markusk.bluelight.miner.queue.ImportScheduler;
 import dev.markusk.bluelight.util.console.ConsoleController;
 import io.prometheus.client.exporter.HTTPServer;
 import joptsimple.OptionSet;
@@ -38,6 +39,7 @@ public class Miner implements AbstractFetcher {
 
   //Scheduler
   private DownloadScheduler downloadScheduler;
+  private ImportScheduler importScheduler;
 
   //Manager
   private FetcherRegistry fetcherRegistry;
@@ -56,8 +58,9 @@ public class Miner implements AbstractFetcher {
     try {
       httpServer = new HTTPServer(8080);
       Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        httpServer.stop();
+        this.fetcherExecutor.stop();
         this.downloadScheduler.closeScheduler();
+        httpServer.stop();
       }));
     } catch (IOException e) {
       e.printStackTrace();
@@ -86,6 +89,9 @@ public class Miner implements AbstractFetcher {
 
     this.downloadScheduler = new DownloadScheduler();
     this.downloadScheduler.initialize();
+
+    this.importScheduler = new ImportScheduler();
+    this.importScheduler.initialize();
 
     this.extractorRegistry = new ExtractorRegistry(new DefaultExtractor());
     this.fetcherRegistry = new FetcherRegistry();
@@ -148,6 +154,10 @@ public class Miner implements AbstractFetcher {
 
   public DownloadScheduler getDownloadScheduler() {
     return this.downloadScheduler;
+  }
+
+  public ImportScheduler getImportScheduler() {
+    return importScheduler;
   }
 
   public TargetConfiguration getConfiguration(final String targetUid) {

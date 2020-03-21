@@ -48,6 +48,8 @@ public class DownloadJob implements AbstractJob {
         .fetchTime(this.baseInfo.getFetchTime()).releaseTime(this.baseInfo.getReleaseTime())
         .fileIdentification(fileIdentification).createArticle();
 
+    final File targetWorkDir = new File(this.miner.getWorkDir(), configuration.getWorkDir());
+
     String[] commandArray =
         {"curl", "-A", "'" + pickUserAgent() + "'", this.baseInfo.getUrl(), "-L", "-o",
             article.getFileIdentification() + ".html"};
@@ -61,13 +63,15 @@ public class DownloadJob implements AbstractJob {
 
     try {
       final Process process =
-          new ProcessBuilder(commandArray).redirectErrorStream(true)
-              .directory(new File(this.miner.getWorkDir(), configuration.getWorkDir())).start();
+          new ProcessBuilder(commandArray).redirectErrorStream(true).directory(targetWorkDir).start();
       process.waitFor();
     } catch (IOException | InterruptedException e) {
       LOGGER.error("Error while downloading", e);
     }
 
+    if (configuration.isAutoIndex()) {
+      this.miner.getImportScheduler().scheduleJob(new ImportJob(article, this.miner, targetWorkDir, configuration));
+    }
     // TODO: 21.03.2020 add extract job
   }
 

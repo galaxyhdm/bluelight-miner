@@ -4,6 +4,7 @@ import dev.markusk.bluelight.api.AbstractInfoFetcher;
 import dev.markusk.bluelight.api.handler.JobHandler;
 import dev.markusk.bluelight.api.impl.BaseFetchInfo;
 import dev.markusk.bluelight.api.job.JobPriority;
+import dev.markusk.bluelight.miner.Constants;
 import dev.markusk.bluelight.miner.Environment;
 import dev.markusk.bluelight.miner.Miner;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +43,7 @@ public class FetcherJob extends TimerTask {
         });
 
       LOGGER.info(this.infoFetcher.getTargetUid() + " | New article count: " + baseFetchInfos.size());
+      Constants.ARTICLE_COUNT.labels(this.infoFetcher.getTargetUid()).set(baseFetchInfos.size());
       if (baseFetchInfos.size() > 0) {
         final String lastFetchedUrl = baseFetchInfos.get(0).getUrl();
         LOGGER.info(this.infoFetcher.getTargetUid() + " | lastUrl=" + lastFetchedUrl);
