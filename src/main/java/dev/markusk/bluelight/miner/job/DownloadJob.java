@@ -70,7 +70,8 @@ public class DownloadJob implements AbstractJob {
     }
 
     if (configuration.isAutoIndex()) {
-      this.miner.getImportScheduler().scheduleJob(new ImportJob(article, this.miner, targetWorkDir, configuration));
+      this.miner.getImportScheduler()
+          .scheduleJob(new ImportJob(article, this.miner, targetWorkDir, this.baseInfo.getTargetUid()));
     }
     // TODO: 21.03.2020 add extract job
   }

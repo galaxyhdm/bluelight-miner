@@ -4,6 +4,7 @@ import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.impl.RssFetcher;
 import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.util.Utils;
+import dev.markusk.bluelight.database.PostgresDataManager;
 import dev.markusk.bluelight.miner.config.Configuration;
 import dev.markusk.bluelight.miner.config.DataStore;
 import dev.markusk.bluelight.miner.config.TargetConfiguration;
@@ -13,6 +14,7 @@ import dev.markusk.bluelight.miner.manager.FetcherExecutor;
 import dev.markusk.bluelight.miner.manager.FetcherRegistry;
 import dev.markusk.bluelight.miner.queue.DownloadScheduler;
 import dev.markusk.bluelight.miner.queue.ImportScheduler;
+import dev.markusk.bluelight.util.TorValidator;
 import dev.markusk.bluelight.util.console.ConsoleController;
 import io.prometheus.client.exporter.HTTPServer;
 import joptsimple.OptionSet;
@@ -46,8 +48,9 @@ public class Miner implements AbstractFetcher {
   private FetcherExecutor fetcherExecutor;
   private ExtractorRegistry extractorRegistry;
 
-  //Config
+  //Data
   private DataStore dataStore;
+  private PostgresDataManager dataManager;
 
   private boolean running;
 
@@ -86,6 +89,10 @@ public class Miner implements AbstractFetcher {
     this.dataStore.loadMap();
 
     this.configuration = this.loadConfig();
+    this.checkTor();
+
+    this.dataManager = new PostgresDataManager();
+    this.dataManager.initialize(this);
 
     this.downloadScheduler = new DownloadScheduler();
     this.downloadScheduler.initialize();
@@ -118,6 +125,14 @@ public class Miner implements AbstractFetcher {
         LOGGER.info(String.format("Created work dir for %s: %s", s, file.mkdirs()));
       }
     });
+  }
+
+  private void checkTor() {
+    final long count = this.configuration.getTargets().values().stream().filter(TargetConfiguration::isTor).count();
+    if (count > 0) {
+      LOGGER.info("Checking tor...");
+      new TorValidator(true).checkTor();
+    }
   }
 
   private Configuration loadConfig() {
@@ -170,6 +185,10 @@ public class Miner implements AbstractFetcher {
 
   public DataStore getDataStore() {
     return this.dataStore;
+  }
+
+  public PostgresDataManager getDataManager() {
+    return dataManager;
   }
 
   public File getWorkDir() {
