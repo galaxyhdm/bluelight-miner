@@ -97,18 +97,18 @@ public class ImportJob implements AbstractJob {
     final Set<Topic> topics = extractor.getTopics(parse);
     if (topics != null) {
       this.article.setTopicTags(topics);
-      dataManager.updateTopicLinks(article);
+      dataManager.updateTopicLinks(this.article);
     } else {
       LOGGER.warn("Topics for article %s are null. Indexing skipped!");
     }
   }
 
   private void indexLocations(final PostgresDataManager dataManager, final Extractor extractor, final Document parse) {
-    LOGGER.debug("Indexing topics for: " + this.article.getId());
+    LOGGER.debug("Indexing locations for: " + this.article.getId());
     final Set<Location> locations = extractor.getLocations(parse);
     if (locations != null) {
       this.article.setLocationTags(locations);
-      dataManager.updateLocationLinks(article);
+      dataManager.updateLocationLinks(this.article);
     } else {
       LOGGER.warn("Locations for article %s are null. Indexing skipped!");
     }
