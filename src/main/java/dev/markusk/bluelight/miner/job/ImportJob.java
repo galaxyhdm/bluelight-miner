@@ -4,6 +4,8 @@ import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.job.AbstractJob;
 import dev.markusk.bluelight.api.job.JobPriority;
 import dev.markusk.bluelight.api.objects.Article;
+import dev.markusk.bluelight.api.objects.Location;
+import dev.markusk.bluelight.api.objects.Topic;
 import dev.markusk.bluelight.database.PostgresDataManager;
 import dev.markusk.bluelight.miner.Miner;
 import dev.markusk.bluelight.miner.config.TargetConfiguration;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class ImportJob implements AbstractJob {
@@ -48,7 +51,7 @@ public class ImportJob implements AbstractJob {
 
   @Override
   public void run() {
-    LOGGER.info("Index article: " + this.article.getId());
+    LOGGER.info("Indexing article: " + this.article.getId() + " for " + this.targetUid);
     final TargetConfiguration configuration = this.miner.getConfiguration(this.targetUid);
     final List<ImportState> importStates = this.getImportStates(configuration.getIndexType());
 
@@ -63,16 +66,52 @@ public class ImportJob implements AbstractJob {
       final Document parse = Jsoup.parse(articleFile, StandardCharsets.UTF_8.name());
 
       if (importStates.contains(ImportState.CONTENT)) {
-        LOGGER.info("Index content");
-        final String content = extractor.getContent(parse);
-        this.article.setContent(content);
-        dataManager.updateArticleContent(this.article);
+        this.indexContent(dataManager, extractor, parse);
+      }
+      if (importStates.contains(ImportState.TOPICS)) {
+        this.indexTopics(dataManager, extractor, parse);
+      }
+      if (importStates.contains(ImportState.LOCATIONS)) {
+        this.indexLocations(dataManager, extractor, parse);
       }
 
     } catch (IOException e) {
       LOGGER.error("Error while indexing file", e);
     }
 
+  }
+
+  private void indexContent(final PostgresDataManager dataManager, final Extractor extractor, final Document parse) {
+    LOGGER.debug("Indexing article content for: " + this.article.getId());
+    final String content = extractor.getContent(parse);
+    if (content != null) {
+      this.article.setContent(content);
+      dataManager.updateArticleContent(this.article);
+    } else {
+      LOGGER.warn("Content for article %s is null. Indexing skipped!");
+    }
+  }
+
+  private void indexTopics(final PostgresDataManager dataManager, final Extractor extractor, final Document parse) {
+    LOGGER.debug("Indexing topics for: " + this.article.getId());
+    final Set<Topic> topics = extractor.getTopics(parse);
+    if (topics != null) {
+      this.article.setTopicTags(topics);
+      dataManager.updateTopicLinks(article);
+    } else {
+      LOGGER.warn("Topics for article %s are null. Indexing skipped!");
+    }
+  }
+
+  private void indexLocations(final PostgresDataManager dataManager, final Extractor extractor, final Document parse) {
+    LOGGER.debug("Indexing topics for: " + this.article.getId());
+    final Set<Location> locations = extractor.getLocations(parse);
+    if (locations != null) {
+      this.article.setLocationTags(locations);
+      dataManager.updateLocationLinks(article);
+    } else {
+      LOGGER.warn("Locations for article %s are null. Indexing skipped!");
+    }
   }
 
   private List<ImportState> getImportStates(final byte value) {
