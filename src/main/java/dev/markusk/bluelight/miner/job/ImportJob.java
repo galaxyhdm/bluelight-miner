@@ -51,7 +51,7 @@ public class ImportJob implements AbstractJob {
 
   @Override
   public void run() {
-    LOGGER.info("Indexing article: " + this.article.getId() + " for " + this.targetUid);
+    LOGGER.info(targetUid + " | Indexing article: " + this.article.getId());
     final TargetConfiguration configuration = this.miner.getConfiguration(this.targetUid);
     final List<ImportState> importStates = this.getImportStates(configuration.getIndexType());
 
