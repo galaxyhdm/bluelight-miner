@@ -73,7 +73,6 @@ public class DownloadJob implements AbstractJob {
       this.miner.getImportScheduler()
           .scheduleJob(new ImportJob(article, this.miner, targetWorkDir, this.baseInfo.getTargetUid()));
     }
-    // TODO: 21.03.2020 add extract job
   }
 
   private String getFileIdentification() {
