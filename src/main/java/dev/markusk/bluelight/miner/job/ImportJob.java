@@ -57,7 +57,8 @@ public class ImportJob implements AbstractJob {
     final List<ImportState> importStates = this.getImportStates(configuration.getIndexType());
 
     final PostgresDataManager dataManager = this.miner.getDataManager();
-    dataManager.addArticle(this.article);
+    if (!dataManager.hasArticle(this.article.getId()))
+      dataManager.addArticle(this.article);
 
     if (importStates.isEmpty()) return;
     final Extractor extractor = this.miner.getExtractorRegistry().getExtractor(this.targetUid);

@@ -3,6 +3,9 @@ package dev.markusk.bluelight.miner;
 import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.impl.RssFetcher;
 import dev.markusk.bluelight.api.interfaces.Extractor;
+import dev.markusk.bluelight.api.modules.Module;
+import dev.markusk.bluelight.api.modules.ModuleLoader;
+import dev.markusk.bluelight.api.modules.ModuleManager;
 import dev.markusk.bluelight.api.util.Utils;
 import dev.markusk.bluelight.database.PostgresDataManager;
 import dev.markusk.bluelight.miner.config.Configuration;
@@ -38,6 +41,10 @@ public class Miner implements AbstractFetcher {
 
   private Configuration configuration;
   private ConsoleController consoleController;
+
+  //Module
+  private ModuleLoader moduleLoader;
+  private ModuleManager moduleManager;
 
   //Scheduler
   private DownloadScheduler downloadScheduler;
@@ -85,10 +92,16 @@ public class Miner implements AbstractFetcher {
     if (!workDir.exists())
       LOGGER.info(workDir.mkdirs());
 
+    this.configuration = this.loadConfig();
+
+    // TODO: 01.04.2020 implement module loader
+    this.moduleLoader = new ModuleLoader(this);
+    this.moduleManager = new ModuleManager(this, this.moduleLoader);
+    this.loadModules();
+
     this.dataStore = new DataStore(new File(this.workDir, "lastUrls.json"));
     this.dataStore.loadMap();
 
-    this.configuration = this.loadConfig();
     this.checkTor();
 
     this.dataManager = new PostgresDataManager();
@@ -107,7 +120,6 @@ public class Miner implements AbstractFetcher {
 
     this.fetcherExecutor = new FetcherExecutor(this, this.fetcherRegistry);
     this.fetcherExecutor.initializeJobs();
-
   }
 
   private void loadFetcher() {
@@ -148,6 +160,20 @@ public class Miner implements AbstractFetcher {
     return null;
   }
 
+  private void loadModules() {
+    String moduleFolderPath =
+        this.configuration.getModuleFolder() == null || this.configuration.getModuleFolder().isEmpty() ? "modules" :
+            this.configuration.getModuleFolder();
+    final File moduleFolder = new File(".", moduleFolderPath);
+    if (!moduleFolder.exists()) {
+      throw new RuntimeException("Error creating " + moduleFolder.getPath() + " directory");
+    }
+    final Module[] modules = this.moduleManager.loadModules(moduleFolder);
+    for (final Module module : modules) {
+      this.moduleManager.enableModule(module);
+      LOGGER.info(String.format("Loading %s", module.getDescription().getName()));
+    }
+  }
 
   private void setupConsole() {
     this.consoleController =

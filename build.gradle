@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'dev.markusk'
-version '0.0.6'
+version '0.0.8'
 
 sourceCompatibility = 1.11
 
@@ -32,7 +32,6 @@ dependencies {
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.26'
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
-
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }

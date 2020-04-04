@@ -59,7 +59,10 @@ public class DownloadJob implements AbstractJob {
       commandArray = Stream.of(torCommand, commandArray).flatMap(Stream::of).toArray(String[]::new);
     }
 
-    LOGGER.debug(baseInfo.getTargetUid() + " | " + Arrays.toString(commandArray));
+    LOGGER.info(String
+        .format("%s | Downloading article %s with identification: %s", this.baseInfo.getTargetUid(), article.getId(),
+            article.getFileIdentification()));
+    LOGGER.debug(this.baseInfo.getTargetUid() + " | " + Arrays.toString(commandArray));
 
     try {
       final Process process =
