@@ -1,7 +1,7 @@
 package dev.markusk.bluelight.miner.manager;
 
-import dev.markusk.bluelight.api.AbstractInfoFetcher;
 import dev.markusk.bluelight.api.handler.JobHandler;
+import dev.markusk.bluelight.api.interfaces.AbstractInfoFetcher;
 import dev.markusk.bluelight.miner.Constants;
 import dev.markusk.bluelight.miner.Miner;
 import dev.markusk.bluelight.miner.job.FetcherJob;

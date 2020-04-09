@@ -1,6 +1,6 @@
 package dev.markusk.bluelight.miner.manager;
 
-import dev.markusk.bluelight.api.AbstractInfoFetcher;
+import dev.markusk.bluelight.api.interfaces.AbstractInfoFetcher;
 
 import java.util.HashMap;
 

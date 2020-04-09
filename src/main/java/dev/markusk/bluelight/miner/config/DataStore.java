@@ -34,7 +34,10 @@ public class DataStore {
   }
 
   public synchronized void loadMap() {
-    if (!this.file.exists()) this.data = new LastUrlData();
+    if (!this.file.exists()){
+      this.data = new LastUrlData();
+      return;
+    }
     try (final FileReader fileReader = new FileReader(this.file, StandardCharsets.UTF_8)) {
       this.data = Constants.GSON.fromJson(fileReader, LastUrlData.class);
     } catch (IOException e) {

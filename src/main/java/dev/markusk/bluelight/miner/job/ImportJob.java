@@ -1,12 +1,12 @@
 package dev.markusk.bluelight.miner.job;
 
+import dev.markusk.bluelight.api.data.AbstractDataManager;
 import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.job.AbstractJob;
 import dev.markusk.bluelight.api.job.JobPriority;
 import dev.markusk.bluelight.api.objects.Article;
 import dev.markusk.bluelight.api.objects.Location;
 import dev.markusk.bluelight.api.objects.Topic;
-import dev.markusk.bluelight.database.PostgresDataManager;
 import dev.markusk.bluelight.miner.Miner;
 import dev.markusk.bluelight.miner.config.TargetConfiguration;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +56,8 @@ public class ImportJob implements AbstractJob {
     final TargetConfiguration configuration = this.miner.getConfiguration(this.targetUid);
     final List<ImportState> importStates = this.getImportStates(configuration.getIndexType());
 
-    final PostgresDataManager dataManager = this.miner.getDataManager();
+    final AbstractDataManager dataManager = this.miner.getDataRegistry().getDataManager(this.targetUid);
+    if (dataManager == null) return;
     if (!dataManager.hasArticle(this.article.getId()))
       dataManager.addArticle(this.article);
 
@@ -83,7 +84,7 @@ public class ImportJob implements AbstractJob {
 
   }
 
-  private void indexContent(final PostgresDataManager dataManager, final Extractor extractor, final Document parse) {
+  private void indexContent(final AbstractDataManager dataManager, final Extractor extractor, final Document parse) {
     LOGGER.debug("Indexing article content for: " + this.article.getId());
     final String content = extractor.getContent(parse);
     if (content != null) {
@@ -94,7 +95,7 @@ public class ImportJob implements AbstractJob {
     }
   }
 
-  private void indexTopics(final PostgresDataManager dataManager, final Extractor extractor, final Document parse) {
+  private void indexTopics(final AbstractDataManager dataManager, final Extractor extractor, final Document parse) {
     LOGGER.debug("Indexing topics for: " + this.article.getId());
     final Set<Topic> topics = extractor.getTopics(parse);
     if (topics != null) {
@@ -105,7 +106,7 @@ public class ImportJob implements AbstractJob {
     }
   }
 
-  private void indexLocations(final PostgresDataManager dataManager, final Extractor extractor, final Document parse) {
+  private void indexLocations(final AbstractDataManager dataManager, final Extractor extractor, final Document parse) {
     LOGGER.debug("Indexing locations for: " + this.article.getId());
     final Set<Location> locations = extractor.getLocations(parse);
     if (locations != null) {

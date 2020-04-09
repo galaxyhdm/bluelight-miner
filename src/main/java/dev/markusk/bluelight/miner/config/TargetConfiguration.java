@@ -1,5 +1,7 @@
 package dev.markusk.bluelight.miner.config;
 
+import dev.markusk.bluelight.api.interfaces.DataSettings;
+
 public class TargetConfiguration {
 
   private String fetchUrl;
@@ -22,6 +24,7 @@ public class TargetConfiguration {
   private Byte indexType;
   private String extractorPath;
   private String workDir;
+  private DataSettings database;
 
   public String getFetchUrl() {
     return fetchUrl;
@@ -77,5 +80,13 @@ public class TargetConfiguration {
 
   public void setWorkDir(final String workDir) {
     this.workDir = workDir;
+  }
+
+  public DataSettings getDatabase() {
+    return this.database;
+  }
+
+  public void setDatabase(final DataSettings database) {
+    this.database = database;
   }
 }

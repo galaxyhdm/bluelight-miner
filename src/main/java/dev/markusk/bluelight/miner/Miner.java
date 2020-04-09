@@ -1,13 +1,13 @@
 package dev.markusk.bluelight.miner;
 
 import dev.markusk.bluelight.api.AbstractFetcher;
+import dev.markusk.bluelight.api.data.DataRegistry;
 import dev.markusk.bluelight.api.impl.RssFetcher;
 import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.modules.Module;
 import dev.markusk.bluelight.api.modules.ModuleLoader;
 import dev.markusk.bluelight.api.modules.ModuleManager;
 import dev.markusk.bluelight.api.util.Utils;
-import dev.markusk.bluelight.database.PostgresDataManager;
 import dev.markusk.bluelight.miner.config.Configuration;
 import dev.markusk.bluelight.miner.config.DataStore;
 import dev.markusk.bluelight.miner.config.TargetConfiguration;
@@ -54,10 +54,10 @@ public class Miner implements AbstractFetcher {
   private FetcherRegistry fetcherRegistry;
   private FetcherExecutor fetcherExecutor;
   private ExtractorRegistry extractorRegistry;
+  private DataRegistry dataRegistry;
 
   //Data
   private DataStore dataStore;
-  private PostgresDataManager dataManager;
 
   private boolean running;
 
@@ -94,6 +94,8 @@ public class Miner implements AbstractFetcher {
 
     this.configuration = this.loadConfig();
 
+    this.dataRegistry = new DataRegistry(this);
+
     // TODO: 01.04.2020 implement module loader
     this.moduleLoader = new ModuleLoader(this);
     this.moduleManager = new ModuleManager(this, this.moduleLoader);
@@ -103,9 +105,6 @@ public class Miner implements AbstractFetcher {
     this.dataStore.loadMap();
 
     this.checkTor();
-
-    this.dataManager = new PostgresDataManager();
-    this.dataManager.initialize(this);
 
     this.downloadScheduler = new DownloadScheduler();
     this.downloadScheduler.initialize();
@@ -124,13 +123,14 @@ public class Miner implements AbstractFetcher {
 
   private void loadFetcher() {
     this.configuration.getTargets().forEach((s, targetConfiguration) -> {
+      if (targetConfiguration.getDatabase() != null)
+        this.getDataRegistry().getDataManager(s, targetConfiguration.getDatabase());
       final Extractor extractor = Utils.getExtractor(targetConfiguration.getExtractorPath());
       this.extractorRegistry.addExtractor(s, extractor);
       final RssFetcher rssFetcher = new RssFetcher();
       rssFetcher.initialize(s, targetConfiguration.getFetchUrl(), targetConfiguration.getUpdateTime());
       this.fetcherRegistry.addInfoFetcher(rssFetcher);
       LOGGER.info("Loaded Fetcher: " + s);
-
       //Create workDirs
       final File file = new File(this.workDir, targetConfiguration.getWorkDir());
       if (!file.exists()) {
@@ -165,13 +165,13 @@ public class Miner implements AbstractFetcher {
         this.configuration.getModuleFolder() == null || this.configuration.getModuleFolder().isEmpty() ? "modules" :
             this.configuration.getModuleFolder();
     final File moduleFolder = new File(".", moduleFolderPath);
-    if (!moduleFolder.exists()) {
+    if (!moduleFolder.exists() && !moduleFolder.mkdir()) {
       throw new RuntimeException("Error creating " + moduleFolder.getPath() + " directory");
     }
     final Module[] modules = this.moduleManager.loadModules(moduleFolder);
     for (final Module module : modules) {
-      this.moduleManager.enableModule(module);
       LOGGER.info(String.format("Loading %s", module.getDescription().getName()));
+      this.moduleManager.enableModule(module);
     }
   }
 
@@ -198,7 +198,7 @@ public class Miner implements AbstractFetcher {
   }
 
   public ImportScheduler getImportScheduler() {
-    return importScheduler;
+    return this.importScheduler;
   }
 
   public TargetConfiguration getConfiguration(final String targetUid) {
@@ -206,18 +206,29 @@ public class Miner implements AbstractFetcher {
   }
 
   public Configuration getConfiguration() {
-    return configuration;
+    return this.configuration;
   }
 
   public DataStore getDataStore() {
     return this.dataStore;
   }
 
-  public PostgresDataManager getDataManager() {
-    return dataManager;
+  public File getWorkDir() {
+    return this.workDir;
   }
 
-  public File getWorkDir() {
-    return workDir;
+  @Override
+  public DataRegistry getDataRegistry() {
+    return this.dataRegistry;
+  }
+
+  @Override
+  public ModuleManager getModuleManager() {
+    return this.moduleManager;
+  }
+
+  @Override
+  public Logger getLogger() {
+    return LOGGER;
   }
 }
