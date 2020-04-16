@@ -2,8 +2,11 @@ package dev.markusk.bluelight.miner;
 
 import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.config.Configuration;
+import dev.markusk.bluelight.api.config.DataStore;
 import dev.markusk.bluelight.api.config.TargetConfiguration;
+import dev.markusk.bluelight.api.console.ConsoleController;
 import dev.markusk.bluelight.api.data.DataRegistry;
+import dev.markusk.bluelight.api.extractor.DefaultExtractor;
 import dev.markusk.bluelight.api.impl.RssFetcher;
 import dev.markusk.bluelight.api.interfaces.AbstractExtractorRegistry;
 import dev.markusk.bluelight.api.interfaces.AbstractFetcherRegistry;
@@ -12,16 +15,13 @@ import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.modules.Module;
 import dev.markusk.bluelight.api.modules.ModuleLoader;
 import dev.markusk.bluelight.api.modules.ModuleManager;
+import dev.markusk.bluelight.api.util.TorValidator;
 import dev.markusk.bluelight.api.util.Utils;
-import dev.markusk.bluelight.miner.config.DataStore;
-import dev.markusk.bluelight.miner.extractor.DefaultExtractor;
 import dev.markusk.bluelight.miner.manager.ExtractorRegistry;
 import dev.markusk.bluelight.miner.manager.FetcherExecutor;
 import dev.markusk.bluelight.miner.manager.FetcherRegistry;
 import dev.markusk.bluelight.miner.queue.DownloadScheduler;
 import dev.markusk.bluelight.miner.queue.ImportScheduler;
-import dev.markusk.bluelight.api.util.TorValidator;
-import dev.markusk.bluelight.api.console.ConsoleController;
 import io.prometheus.client.exporter.HTTPServer;
 import joptsimple.OptionSet;
 import org.apache.logging.log4j.LogManager;
@@ -99,7 +99,6 @@ public class Miner implements AbstractFetcher {
 
     this.dataRegistry = new DataRegistry(this);
 
-    // TODO: 01.04.2020 implement module loader
     this.moduleLoader = new ModuleLoader(this);
     this.moduleManager = new ModuleManager(this, this.moduleLoader);
     this.loadModules();
@@ -213,6 +212,7 @@ public class Miner implements AbstractFetcher {
     return this.configuration;
   }
 
+  @Override
   public DataStore getDataStore() {
     return this.dataStore;
   }

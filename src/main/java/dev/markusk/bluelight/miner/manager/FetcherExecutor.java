@@ -1,17 +1,19 @@
 package dev.markusk.bluelight.miner.manager;
 
 import dev.markusk.bluelight.api.handler.JobHandler;
+import dev.markusk.bluelight.api.impl.FetcherJob;
+import dev.markusk.bluelight.api.interfaces.AbstractFetcherExecutor;
 import dev.markusk.bluelight.api.interfaces.AbstractFetcherRegistry;
 import dev.markusk.bluelight.api.interfaces.AbstractInfoFetcher;
 import dev.markusk.bluelight.miner.Constants;
+import dev.markusk.bluelight.miner.Environment;
 import dev.markusk.bluelight.miner.Miner;
-import dev.markusk.bluelight.miner.job.FetcherJob;
 import io.prometheus.client.Histogram;
 
 import java.util.HashMap;
 import java.util.Timer;
 
-public class FetcherExecutor { // TODO: 16.04.2020 make interface in api after FetcherJob is moved
+public class FetcherExecutor implements AbstractFetcherExecutor {
 
   private final static Histogram REQUEST_LATENCY = Histogram.build()
       .name("requests_latency_seconds").help("Request latency in seconds.").labelNames("targetUid").register();
@@ -28,13 +30,15 @@ public class FetcherExecutor { // TODO: 16.04.2020 make interface in api after F
     this.jobMap = new HashMap<>();
   }
 
+  @Override
   public void initializeJobs() {
     this.jobMap.clear();
     this.fetcherRegistry.getFetcherMap().forEach((s, infoFetcher) -> addJob(infoFetcher));
   }
 
-  private void addJob(AbstractInfoFetcher infoFetcher) {
-    final FetcherJob fetcherJob = new FetcherJob(this.miner, infoFetcher);
+  @Override
+  public void addJob(AbstractInfoFetcher infoFetcher) {
+    final FetcherJob fetcherJob = new FetcherJob(this.miner, infoFetcher, !Environment.NO_FETCH);
     this.jobMap.put(infoFetcher.getTargetUid(), fetcherJob);
     this.registerHandler(fetcherJob);
     this.timer.schedule(fetcherJob, 100 * getRandomNumberInRange(1, 10), minutesToMillis(infoFetcher.getUpdateTime()));
@@ -50,11 +54,21 @@ public class FetcherExecutor { // TODO: 16.04.2020 make interface in api after F
       }
 
       @Override
+      public void updateGauge(final String targetUid, final double value) {
+        Constants.ARTICLE_COUNT.labels(targetUid).set(value);
+      }
+
+      @Override
       public void onEnd() {
         if (timer == null) return;
         this.timer.observeDuration();
       }
     });
+  }
+
+  @Override
+  public FetcherJob getFetcherJob(final String targetUid) {
+    return this.jobMap.get(targetUid);
   }
 
   private int minutesToMillis(int minutes) {

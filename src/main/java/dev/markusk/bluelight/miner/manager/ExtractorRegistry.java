@@ -1,5 +1,6 @@
 package dev.markusk.bluelight.miner.manager;
 
+import dev.markusk.bluelight.api.extractor.DefaultExtractor;
 import dev.markusk.bluelight.api.interfaces.AbstractExtractorRegistry;
 import dev.markusk.bluelight.api.interfaces.Extractor;
 
@@ -34,7 +35,7 @@ public class ExtractorRegistry implements AbstractExtractorRegistry {
 
   /**
    * @param targetUid the targetUid for the extractor
-   * @return the provided {@link Extractor} or when the result is null return the {@link dev.markusk.bluelight.miner.extractor.DefaultExtractor}
+   * @return the provided {@link Extractor} or when the result is null return the {@link DefaultExtractor}
    */
   @Override
   public Extractor getExtractor(final String targetUid) {

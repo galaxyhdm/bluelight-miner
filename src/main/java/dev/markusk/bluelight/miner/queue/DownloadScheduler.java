@@ -1,9 +1,9 @@
 package dev.markusk.bluelight.miner.queue;
 
 import dev.markusk.bluelight.api.interfaces.AbstractScheduler;
+import dev.markusk.bluelight.api.job.AbstractDownloadJob;
 import dev.markusk.bluelight.api.job.AbstractJob;
 import dev.markusk.bluelight.miner.Environment;
-import dev.markusk.bluelight.api.job.DownloadJob;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,9 +16,8 @@ import java.util.concurrent.TimeUnit;
 public class DownloadScheduler implements AbstractScheduler {
 
   private static final Logger LOGGER = LogManager.getLogger();
-
+  private final ExecutorService priorityJobScheduler = Executors.newSingleThreadExecutor();
   private ExecutorService priorityJobPoolExecutor;
-  private ExecutorService priorityJobScheduler = Executors.newSingleThreadExecutor();
   private PriorityBlockingQueue<AbstractJob> priorityQueue;
 
   @Override
@@ -39,7 +38,7 @@ public class DownloadScheduler implements AbstractScheduler {
 
   @Override
   public void scheduleJob(final AbstractJob job) {
-    if (!(job instanceof DownloadJob)) throw new IllegalArgumentException("Job is not a DownloadJob");
+    if (!(job instanceof AbstractDownloadJob)) throw new IllegalArgumentException("Job is not a DownloadJob");
     this.priorityQueue.add(job);
   }
 
