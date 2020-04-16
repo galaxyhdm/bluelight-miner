@@ -1,6 +1,7 @@
 package dev.markusk.bluelight.miner.manager;
 
 import dev.markusk.bluelight.api.handler.JobHandler;
+import dev.markusk.bluelight.api.interfaces.AbstractFetcherRegistry;
 import dev.markusk.bluelight.api.interfaces.AbstractInfoFetcher;
 import dev.markusk.bluelight.miner.Constants;
 import dev.markusk.bluelight.miner.Miner;
@@ -16,11 +17,11 @@ public class FetcherExecutor {
       .name("requests_latency_seconds").help("Request latency in seconds.").labelNames("targetUid").register();
 
   private final Miner miner;
-  private final FetcherRegistry fetcherRegistry;
+  private final AbstractFetcherRegistry fetcherRegistry;
   private final HashMap<String, FetcherJob> jobMap;
   private final Timer timer;
 
-  public FetcherExecutor(final Miner miner, final FetcherRegistry fetcherRegistry) {
+  public FetcherExecutor(final Miner miner, final AbstractFetcherRegistry fetcherRegistry) {
     this.miner = miner;
     this.fetcherRegistry = fetcherRegistry;
     this.timer = new Timer("Fetcher Executor");

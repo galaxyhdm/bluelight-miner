@@ -2,7 +2,7 @@ package dev.markusk.bluelight.miner.queue;
 
 import dev.markusk.bluelight.api.interfaces.AbstractScheduler;
 import dev.markusk.bluelight.api.job.AbstractJob;
-import dev.markusk.bluelight.miner.job.ImportJob;
+import dev.markusk.bluelight.api.job.ImportJob;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

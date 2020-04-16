@@ -1,16 +1,19 @@
 package dev.markusk.bluelight.miner;
 
 import dev.markusk.bluelight.api.AbstractFetcher;
+import dev.markusk.bluelight.api.config.Configuration;
+import dev.markusk.bluelight.api.config.TargetConfiguration;
 import dev.markusk.bluelight.api.data.DataRegistry;
 import dev.markusk.bluelight.api.impl.RssFetcher;
+import dev.markusk.bluelight.api.interfaces.AbstractExtractorRegistry;
+import dev.markusk.bluelight.api.interfaces.AbstractFetcherRegistry;
+import dev.markusk.bluelight.api.interfaces.AbstractScheduler;
 import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.modules.Module;
 import dev.markusk.bluelight.api.modules.ModuleLoader;
 import dev.markusk.bluelight.api.modules.ModuleManager;
 import dev.markusk.bluelight.api.util.Utils;
-import dev.markusk.bluelight.miner.config.Configuration;
 import dev.markusk.bluelight.miner.config.DataStore;
-import dev.markusk.bluelight.miner.config.TargetConfiguration;
 import dev.markusk.bluelight.miner.extractor.DefaultExtractor;
 import dev.markusk.bluelight.miner.manager.ExtractorRegistry;
 import dev.markusk.bluelight.miner.manager.FetcherExecutor;
@@ -47,13 +50,13 @@ public class Miner implements AbstractFetcher {
   private ModuleManager moduleManager;
 
   //Scheduler
-  private DownloadScheduler downloadScheduler;
-  private ImportScheduler importScheduler;
+  private AbstractScheduler downloadScheduler;
+  private AbstractScheduler importScheduler;
 
   //Manager
-  private FetcherRegistry fetcherRegistry;
+  private AbstractFetcherRegistry fetcherRegistry;
   private FetcherExecutor fetcherExecutor;
-  private ExtractorRegistry extractorRegistry;
+  private AbstractExtractorRegistry extractorRegistry;
   private DataRegistry dataRegistry;
 
   //Data
@@ -181,7 +184,8 @@ public class Miner implements AbstractFetcher {
     this.consoleController.setupConsole();
   }
 
-  public FetcherRegistry getFetcherRegistry() {
+  @Override
+  public AbstractFetcherRegistry getFetcherRegistry() {
     return this.fetcherRegistry;
   }
 
@@ -189,22 +193,22 @@ public class Miner implements AbstractFetcher {
     return this.fetcherExecutor;
   }
 
-  public ExtractorRegistry getExtractorRegistry() {
+  @Override
+  public AbstractExtractorRegistry getExtractorRegistry() {
     return this.extractorRegistry;
   }
 
-  public DownloadScheduler getDownloadScheduler() {
+  @Override
+  public AbstractScheduler getDownloadScheduler() {
     return this.downloadScheduler;
   }
 
-  public ImportScheduler getImportScheduler() {
+  @Override
+  public AbstractScheduler getImportScheduler() {
     return this.importScheduler;
   }
 
-  public TargetConfiguration getConfiguration(final String targetUid) {
-    return this.configuration.getTargets().get(targetUid);
-  }
-
+  @Override
   public Configuration getConfiguration() {
     return this.configuration;
   }
@@ -213,8 +217,14 @@ public class Miner implements AbstractFetcher {
     return this.dataStore;
   }
 
+  @Override
   public File getWorkDir() {
     return this.workDir;
+  }
+
+  @Override
+  public TargetConfiguration getTargetConfiguration(final String targetUid) {
+    return this.configuration.getTargets().get(targetUid);
   }
 
   @Override
