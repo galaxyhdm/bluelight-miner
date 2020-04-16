@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class FetcherJob extends TimerTask {
+public class FetcherJob extends TimerTask { // TODO: 16.04.2020 move to api
 
   private static final Logger LOGGER = LogManager.getLogger();
 

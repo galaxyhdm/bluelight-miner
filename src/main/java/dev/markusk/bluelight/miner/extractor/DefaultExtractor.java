@@ -3,12 +3,12 @@ package dev.markusk.bluelight.miner.extractor;
 import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.objects.Location;
 import dev.markusk.bluelight.api.objects.Topic;
-import dev.markusk.bluelight.util.CodeGeneration;
+import dev.markusk.bluelight.api.util.CodeGeneration;
 import org.jsoup.nodes.Document;
 
 import java.util.Set;
 
-public class DefaultExtractor implements Extractor {
+public class DefaultExtractor implements Extractor { // TODO: 16.04.2020 move to api
 
   @Override
   public String getIdFromUrl(final String url) {

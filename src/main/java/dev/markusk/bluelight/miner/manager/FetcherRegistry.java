@@ -25,6 +25,12 @@ public class FetcherRegistry implements AbstractFetcherRegistry {
 
   @Override
   public HashMap<String, AbstractInfoFetcher> getFetcherMap() {
-    return fetcherMap;
+    return this.fetcherMap;
   }
+
+  @Override
+  public AbstractInfoFetcher getInfoFetcher(final String targetId) {
+    return this.fetcherMap.get(targetId);
+  }
+
 }

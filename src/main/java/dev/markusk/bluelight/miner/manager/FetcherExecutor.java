@@ -11,7 +11,7 @@ import io.prometheus.client.Histogram;
 import java.util.HashMap;
 import java.util.Timer;
 
-public class FetcherExecutor {
+public class FetcherExecutor { // TODO: 16.04.2020 make interface in api after FetcherJob is moved
 
   private final static Histogram REQUEST_LATENCY = Histogram.build()
       .name("requests_latency_seconds").help("Request latency in seconds.").labelNames("targetUid").register();

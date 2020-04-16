@@ -24,7 +24,6 @@ repositories {
 dependencies {
     //implementation project(':database-module')
     implementation project(':fetcher-api')
-    implementation project(':util-module')
 
     // https://mvnrepository.com/artifact/io.prometheus/simpleclient_httpserver
     implementation group: 'io.prometheus', name: 'simpleclient_httpserver', version: '0.8.1'
