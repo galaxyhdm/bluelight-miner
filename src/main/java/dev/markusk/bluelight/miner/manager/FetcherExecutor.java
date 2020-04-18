@@ -71,12 +71,13 @@ public class FetcherExecutor implements AbstractFetcherExecutor {
     return this.jobMap.get(targetUid);
   }
 
-  private int minutesToMillis(int minutes) {
-    return 1000 * 60 * minutes;
-  }
-
+  @Override
   public void stop() {
     this.timer.cancel();
+  }
+
+  private int minutesToMillis(int minutes) {
+    return 1000 * 60 * minutes;
   }
 
   private int getRandomNumberInRange(int min, int max) {
