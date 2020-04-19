@@ -43,4 +43,8 @@ public class ExtractorRegistry implements AbstractExtractorRegistry {
     return result == null ? this.defaultExtractor : result;
   }
 
+  @Override
+  public Extractor getDefaultExtractor() {
+    return this.defaultExtractor;
+  }
 }
