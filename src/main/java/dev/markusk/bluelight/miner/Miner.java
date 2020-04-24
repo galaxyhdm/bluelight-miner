@@ -126,7 +126,7 @@ public class Miner implements AbstractFetcher {
         this.getDataRegistry().getDataManager(s, targetConfiguration.getDatabase());
       final Extractor extractor = Utils.getExtractor(targetConfiguration.getExtractorPath());
       this.extractorRegistry.addExtractor(s, extractor);
-      final RssFetcher rssFetcher = new RssFetcher();
+      final RssFetcher rssFetcher = new RssFetcher(); // TODO: 21.04.2020 select fetcherPath to use not only rss-fetcher
       rssFetcher.initialize(s, targetConfiguration.getFetchUrl(), targetConfiguration.getUpdateTime());
       this.fetcherRegistry.addInfoFetcher(rssFetcher);
       LOGGER.info("Loaded Fetcher: " + s);
