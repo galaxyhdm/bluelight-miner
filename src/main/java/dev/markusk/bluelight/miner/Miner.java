@@ -2,7 +2,6 @@ package dev.markusk.bluelight.miner;
 
 import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.config.Configuration;
-import dev.markusk.bluelight.api.config.DataStore;
 import dev.markusk.bluelight.api.config.TargetConfiguration;
 import dev.markusk.bluelight.api.console.ConsoleController;
 import dev.markusk.bluelight.api.data.DataRegistry;
@@ -14,6 +13,7 @@ import dev.markusk.bluelight.api.modules.ModuleLoader;
 import dev.markusk.bluelight.api.modules.ModuleManager;
 import dev.markusk.bluelight.api.util.TorValidator;
 import dev.markusk.bluelight.api.util.Utils;
+import dev.markusk.bluelight.miner.config.DataStore;
 import dev.markusk.bluelight.miner.manager.ExtractorRegistry;
 import dev.markusk.bluelight.miner.manager.FetcherExecutor;
 import dev.markusk.bluelight.miner.manager.FetcherRegistry;
@@ -57,7 +57,7 @@ public class Miner implements AbstractFetcher {
   private DataRegistry dataRegistry;
 
   //Data
-  private DataStore dataStore;
+  private AbstractUrlData urlData;
 
   private boolean running;
 
@@ -100,8 +100,8 @@ public class Miner implements AbstractFetcher {
     this.moduleManager = new ModuleManager(this, this.moduleLoader);
     this.loadModules();
 
-    this.dataStore = new DataStore(new File(this.workDir, "lastUrls.json"));
-    this.dataStore.loadMap();
+    this.urlData = new DataStore(new File(this.workDir, "lastUrls.json"));
+    this.urlData.load();
 
     this.checkTor();
 
@@ -211,8 +211,8 @@ public class Miner implements AbstractFetcher {
   }
 
   @Override
-  public DataStore getDataStore() {
-    return this.dataStore;
+  public AbstractUrlData getUrlData() {
+    return this.urlData;
   }
 
   @Override
