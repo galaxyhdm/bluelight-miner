@@ -5,7 +5,6 @@ import dev.markusk.bluelight.api.config.Configuration;
 import dev.markusk.bluelight.api.config.TargetConfiguration;
 import dev.markusk.bluelight.api.console.ConsoleController;
 import dev.markusk.bluelight.api.extractor.DefaultExtractor;
-import dev.markusk.bluelight.api.impl.RssFetcher;
 import dev.markusk.bluelight.api.interfaces.*;
 import dev.markusk.bluelight.api.modules.Module;
 import dev.markusk.bluelight.api.modules.ModuleLoader;
@@ -114,28 +113,48 @@ public class Miner implements AbstractFetcher {
     this.extractorRegistry = new ExtractorRegistry(new DefaultExtractor());
     this.fetcherRegistry = new FetcherRegistry();
 
-    this.loadFetcher();
+    this.configuration.getTargets().forEach(this::loadFetcher);
 
     this.fetcherExecutor = new FetcherExecutor(this, this.fetcherRegistry);
     this.fetcherExecutor.initializeJobs();
   }
 
-  private void loadFetcher() {
-    this.configuration.getTargets().forEach((s, targetConfiguration) -> {
-      if (targetConfiguration.getDatabase() != null)
-        this.getDataRegistry().getDataManager(s, targetConfiguration.getDatabase());
-      final Extractor extractor = Utils.getExtractor(targetConfiguration.getExtractorPath());
-      this.extractorRegistry.addExtractor(s, extractor);
-      final RssFetcher rssFetcher = new RssFetcher(); // TODO: 21.04.2020 select fetcherPath to use not only rss-fetcher
-      rssFetcher.initialize(s, targetConfiguration.getFetchUrl(), targetConfiguration.getUpdateTime());
-      this.fetcherRegistry.addInfoFetcher(rssFetcher);
-      LOGGER.info("Loaded Fetcher: " + s);
-      //Create workDirs
-      final File file = new File(this.workDir, targetConfiguration.getWorkDir());
-      if (!file.exists()) {
-        LOGGER.info(String.format("Created work dir for %s: %s", s, file.mkdirs()));
-      }
-    });
+  private void loadFetcher(final String targetUid, final TargetConfiguration targetConfiguration) {
+    if (targetConfiguration.getDatabase() != null)
+      this.getDataRegistry().getDataManager(targetUid, targetConfiguration.getDatabase());
+
+    this.createFile(targetUid, targetConfiguration);
+    this.registerExtractor(targetUid, targetConfiguration);
+    this.createFetcher(targetUid, targetConfiguration);
+    LOGGER.info("Loaded Fetcher: " + targetUid);
+  }
+
+  private void registerExtractor(final String targetUid, final TargetConfiguration targetConfiguration) {
+    final Extractor extractor = Utils.getClass(targetConfiguration.getExtractorPath(), Extractor.class);
+    if (extractor == null) {
+      LOGGER.error(String.format("Extractor for %s is null!", targetUid));
+      return;
+    }
+    this.extractorRegistry.addExtractor(targetUid, extractor);
+  }
+
+  private void createFetcher(final String targetUid, final TargetConfiguration targetConfiguration) {
+    final AbstractInfoFetcher infoFetcher =
+        Utils.getClass(targetConfiguration.getFetcherPath(), AbstractInfoFetcher.class);
+    if (infoFetcher == null) {
+      LOGGER.error(String.format("InfoFetcher for %s is null!", targetUid));
+      return;
+    }
+    infoFetcher.initialize(targetUid, targetConfiguration.getFetchUrl(), targetConfiguration.getUpdateTime());
+    this.fetcherRegistry.addInfoFetcher(infoFetcher);
+  }
+
+  private void createFile(final String targetUid, final TargetConfiguration targetConfiguration) {
+    final File file = new File(this.workDir, targetConfiguration.getWorkDir());
+    if (!file.exists() && !file.mkdir()) {
+      throw new RuntimeException(
+          String.format("Error creating %s directory for fetcher %s", file.getPath(), targetUid));
+    }
   }
 
   private void checkTor() {

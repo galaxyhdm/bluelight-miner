@@ -12,6 +12,7 @@ import io.prometheus.client.Histogram;
 
 import java.util.HashMap;
 import java.util.Timer;
+import java.util.concurrent.TimeUnit;
 
 public class FetcherExecutor implements AbstractFetcherExecutor {
 
@@ -41,7 +42,8 @@ public class FetcherExecutor implements AbstractFetcherExecutor {
     final FetcherJob fetcherJob = new FetcherJob(this.miner, infoFetcher, !Environment.NO_FETCH);
     this.jobMap.put(infoFetcher.getTargetUid(), fetcherJob);
     this.registerHandler(fetcherJob);
-    this.timer.schedule(fetcherJob, 100 * getRandomNumberInRange(1, 10), minutesToMillis(infoFetcher.getUpdateTime()));
+    this.timer.schedule(fetcherJob, 100 * getRandomNumberInRange(1, 10),
+        TimeUnit.MINUTES.toMillis(infoFetcher.getUpdateTime()));
   }
 
   private void registerHandler(FetcherJob job) {
@@ -74,10 +76,6 @@ public class FetcherExecutor implements AbstractFetcherExecutor {
   @Override
   public void stop() {
     this.timer.cancel();
-  }
-
-  private int minutesToMillis(int minutes) {
-    return 1000 * 60 * minutes;
   }
 
   private int getRandomNumberInRange(int min, int max) {
