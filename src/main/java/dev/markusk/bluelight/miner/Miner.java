@@ -4,7 +4,6 @@ import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.config.Configuration;
 import dev.markusk.bluelight.api.config.TargetConfiguration;
 import dev.markusk.bluelight.api.console.ConsoleController;
-import dev.markusk.bluelight.api.data.DataRegistry;
 import dev.markusk.bluelight.api.extractor.DefaultExtractor;
 import dev.markusk.bluelight.api.impl.RssFetcher;
 import dev.markusk.bluelight.api.interfaces.*;
@@ -14,6 +13,7 @@ import dev.markusk.bluelight.api.modules.ModuleManager;
 import dev.markusk.bluelight.api.util.TorValidator;
 import dev.markusk.bluelight.api.util.Utils;
 import dev.markusk.bluelight.miner.config.DataStore;
+import dev.markusk.bluelight.miner.manager.DataRegistry;
 import dev.markusk.bluelight.miner.manager.ExtractorRegistry;
 import dev.markusk.bluelight.miner.manager.FetcherExecutor;
 import dev.markusk.bluelight.miner.manager.FetcherRegistry;
@@ -54,7 +54,7 @@ public class Miner implements AbstractFetcher {
   private AbstractFetcherRegistry fetcherRegistry;
   private AbstractFetcherExecutor fetcherExecutor;
   private AbstractExtractorRegistry extractorRegistry;
-  private DataRegistry dataRegistry;
+  private AbstractDataRegistry dataRegistry;
 
   //Data
   private AbstractUrlData urlData;
@@ -226,7 +226,7 @@ public class Miner implements AbstractFetcher {
   }
 
   @Override
-  public DataRegistry getDataRegistry() {
+  public AbstractDataRegistry getDataRegistry() {
     return this.dataRegistry;
   }
 
