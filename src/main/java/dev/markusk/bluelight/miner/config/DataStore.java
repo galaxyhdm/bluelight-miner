@@ -23,16 +23,19 @@ public class DataStore implements AbstractUrlData {
     this.file = file;
   }
 
+  @Override
   public void setLastUrl(final String targetUid, final String url) {
     if (this.data == null) throw new NullPointerException("Json data not initialized");
     this.data.getLastUrlMap().put(targetUid, url);
   }
 
+  @Override
   public String getLastUrl(final String targetUid) {
     if (this.data == null) throw new NullPointerException("Json data not initialized");
     return this.data.getLastUrlMap().get(targetUid);
   }
 
+  @Override
   public synchronized void load() {
     if (!this.file.exists()) {
       this.data = new LastUrlData();
@@ -45,6 +48,7 @@ public class DataStore implements AbstractUrlData {
     }
   }
 
+  @Override
   public synchronized void save() {
     try (final FileWriter writer = new FileWriter(this.file, StandardCharsets.UTF_8)) {
       Constants.GSON.toJson(this.data, writer);

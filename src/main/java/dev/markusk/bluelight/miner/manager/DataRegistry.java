@@ -23,6 +23,7 @@ public class DataRegistry implements AbstractDataRegistry {
     this.fetcher = fetcher;
   }
 
+  @Override
   public void register(final String adapterName, final Class<? extends AbstractDataManager> dataClass) {
     if (adapterName == null)
       throw new NullPointerException("adapterName is null");
@@ -36,6 +37,7 @@ public class DataRegistry implements AbstractDataRegistry {
     this.dataManagers.put(adapterName, dataClass);
   }
 
+  @Override
   public AbstractDataManager getDataManager(final String targetUid, final DataSettings settings) {
     if (this.dataManagerMap.containsKey(targetUid))
       return this.dataManagerMap.get(targetUid);
@@ -54,6 +56,7 @@ public class DataRegistry implements AbstractDataRegistry {
     return abstractDataManager;
   }
 
+  @Override
   public AbstractDataManager getDataManager(final String targetUid) {
     if (!this.dataManagerMap.containsKey(targetUid)) return null;
     return this.dataManagerMap.get(targetUid);
