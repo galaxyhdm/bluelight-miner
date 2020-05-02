@@ -28,6 +28,9 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static dev.markusk.bluelight.miner.Environment.*;
 
@@ -116,6 +119,10 @@ public class Miner implements AbstractFetcher {
     this.configuration.getTargets().forEach(this::loadFetcher);
 
     this.fetcherExecutor = new FetcherExecutor(this, this.fetcherRegistry);
+
+    if (SYNC_START)
+      this.syncStart();
+
     this.fetcherExecutor.initializeJobs();
   }
 
@@ -258,4 +265,26 @@ public class Miner implements AbstractFetcher {
   public Logger getLogger() {
     return LOGGER;
   }
+
+  private void syncStart() {
+    try {
+      final long waitMillis = this.getWaitMillis();
+      LOGGER.debug(String.format("Waiting %ss to start jobs", TimeUnit.MILLISECONDS.toSeconds(waitMillis)));
+      Thread.sleep(waitMillis - 1000);
+    } catch (InterruptedException e) {
+      LOGGER.error("Error", e);
+    }
+  }
+
+  private long getWaitMillis() {
+    final Date date = new Date();
+    final Calendar instance = Calendar.getInstance();
+
+    instance.set(Calendar.MINUTE, instance.get(Calendar.MINUTE) + 1);
+    instance.set(Calendar.SECOND, 0);
+    instance.set(Calendar.MILLISECOND, 0);
+
+    return instance.getTimeInMillis() - date.getTime();
+  }
+
 }
