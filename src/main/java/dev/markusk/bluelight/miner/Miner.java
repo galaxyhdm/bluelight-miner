@@ -195,7 +195,8 @@ public class Miner implements AbstractFetcher {
     }
     final Module[] modules = this.moduleManager.loadModules(moduleFolder);
     for (final Module module : modules) {
-      LOGGER.info(String.format("Loading %s", module.getDescription().getName()));
+      LOGGER.info(String.format("Loading %s with version: %s", module.getDescription().getName(),
+          module.getDescription().getVersion()));
       this.moduleManager.enableModule(module);
     }
   }
