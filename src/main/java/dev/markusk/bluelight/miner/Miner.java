@@ -3,6 +3,7 @@ package dev.markusk.bluelight.miner;
 import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.config.Configuration;
 import dev.markusk.bluelight.api.config.TargetConfiguration;
+import dev.markusk.bluelight.api.console.BetterSystemOut;
 import dev.markusk.bluelight.api.console.ConsoleController;
 import dev.markusk.bluelight.api.extractor.DefaultExtractor;
 import dev.markusk.bluelight.api.interfaces.*;
@@ -205,6 +206,7 @@ public class Miner implements AbstractFetcher {
     this.consoleController =
         new ConsoleController(VersionInfo.DEBUG || this.optionSet.has("debug") || Environment.DEBUG, false);
     this.consoleController.setupConsole();
+    new BetterSystemOut(LOGGER).overwrite();
   }
 
   @Override
