@@ -48,8 +48,7 @@ public class DataRegistry implements AbstractDataRegistry {
     try {
       abstractDataManager = adapterClass.getDeclaredConstructor().newInstance();
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      LOGGER.error("Could not initialize data-manager");
-      return null;
+      throw new RuntimeException(e);
     }
     abstractDataManager.initialize(this.fetcher.getLogger(), settings);
     this.dataManagerMap.put(targetUid, abstractDataManager);

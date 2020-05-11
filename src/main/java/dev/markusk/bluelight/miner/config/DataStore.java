@@ -44,7 +44,7 @@ public class DataStore implements AbstractUrlData {
     try (final FileReader fileReader = new FileReader(this.file, StandardCharsets.UTF_8)) {
       this.data = Constants.GSON.fromJson(fileReader, LastUrlData.class);
     } catch (IOException e) {
-      LOGGER.error("Error while loading file", e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -53,7 +53,7 @@ public class DataStore implements AbstractUrlData {
     try (final FileWriter writer = new FileWriter(this.file, StandardCharsets.UTF_8)) {
       Constants.GSON.toJson(this.data, writer);
     } catch (IOException e) {
-      LOGGER.error("Error while writing file", e);
+      throw new RuntimeException(e);
     }
   }
 

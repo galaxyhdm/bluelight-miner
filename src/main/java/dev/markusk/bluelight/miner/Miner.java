@@ -140,8 +140,7 @@ public class Miner implements AbstractFetcher {
   private void registerExtractor(final String targetUid, final TargetConfiguration targetConfiguration) {
     final Extractor extractor = Utils.getClass(targetConfiguration.getExtractorPath(), Extractor.class);
     if (extractor == null) {
-      LOGGER.error(String.format("Extractor for %s is null!", targetUid));
-      return;
+      throw new NullPointerException(String.format("Extractor for %s is null!", targetUid));
     }
     this.extractorRegistry.addExtractor(targetUid, extractor);
   }
@@ -150,8 +149,7 @@ public class Miner implements AbstractFetcher {
     final AbstractInfoFetcher infoFetcher =
         Utils.getClass(targetConfiguration.getFetcherPath(), AbstractInfoFetcher.class);
     if (infoFetcher == null) {
-      LOGGER.error(String.format("InfoFetcher for %s is null!", targetUid));
-      return;
+      throw new NullPointerException(String.format("InfoFetcher for %s is null!", targetUid));
     }
     infoFetcher.initialize(targetUid, targetConfiguration.getFetchUrl(), targetConfiguration.getUpdateTime());
     this.fetcherRegistry.addInfoFetcher(infoFetcher);
@@ -180,8 +178,7 @@ public class Miner implements AbstractFetcher {
       final Configuration load = yaml.loadAs(inputStream, Configuration.class);
       if (load != null) return load;
     } catch (Exception e) {
-      LOGGER.error("Error", e);
-      return null;
+      throw new RuntimeException(e);
     }
     return null;
   }
@@ -275,7 +272,7 @@ public class Miner implements AbstractFetcher {
       LOGGER.debug(String.format("Waiting %ss to start jobs", TimeUnit.MILLISECONDS.toSeconds(waitMillis)));
       Thread.sleep(waitMillis - 1000);
     } catch (InterruptedException e) {
-      LOGGER.error("Error", e);
+      throw new RuntimeException(e);
     }
   }
 
