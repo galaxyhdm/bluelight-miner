@@ -29,6 +29,9 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -96,6 +99,11 @@ public class Miner implements AbstractFetcher {
       LOGGER.info(workDir.mkdirs());
 
     this.configuration = this.loadConfig();
+    if (this.configuration == null) {
+      LOGGER.error("Configuration is null! Creating basic configuration...");
+      this.saveDefaultConfig();
+      System.exit(20);
+    }
 
     this.dataRegistry = new DataRegistry(this);
 
@@ -181,6 +189,15 @@ public class Miner implements AbstractFetcher {
       throw new RuntimeException(e);
     }
     return null;
+  }
+
+  private void saveDefaultConfig() {
+    try (final InputStream resourceAsStream = Miner.class.getClassLoader().getResourceAsStream("config.yml")) {
+      assert resourceAsStream != null;
+      Files.copy(resourceAsStream, Path.of(new File("config.yml").toURI()));
+    } catch (IOException e) {
+      LOGGER.error("Error while saveDefaultConfig", e);
+    }
   }
 
   private void loadModules() {
