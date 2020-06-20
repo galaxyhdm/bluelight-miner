@@ -88,15 +88,15 @@ public class Miner implements AbstractFetcher {
     if (this.running) return;
     this.running = true;
     this.setupConsole();
-    LOGGER.info("NO_FETCH=" + NO_FETCH + " DEBUG=" + DEBUG + " POOL_SIZE=" + POOL_SIZE);
+    LOGGER.debug("NO_FETCH=" + NO_FETCH + " DEBUG=" + DEBUG + " POOL_SIZE=" + POOL_SIZE);
     LOGGER.info(String
         .format("Starting miner... (Version Nr. %s built on %s at %s)", VersionInfo.VERSION, VersionInfo.BUILD_DATE,
             VersionInfo.BUILD_TIME));
 
     final String version = dev.markusk.bluelight.api.VersionInfo.VERSION;
-    final String buildDate = dev.markusk.bluelight.api.VersionInfo.VERSION;
-    final String buildTime = dev.markusk.bluelight.api.VersionInfo.VERSION;
-    LOGGER.info(String.format("Api (Version Nr. %s built on %s at %s)", version, buildDate, buildTime));
+    final String buildDate = dev.markusk.bluelight.api.VersionInfo.BUILD_DATE;
+    final String buildTime = dev.markusk.bluelight.api.VersionInfo.BUILD_TIME;
+    LOGGER.info(String.format("Api-Version Nr. %s built on %s at %s)", version, buildDate, buildTime));
 
     //Create work dir
     this.workDir = (File) optionSet.valueOf("dir");
