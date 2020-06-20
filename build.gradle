@@ -1,13 +1,16 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+buildscript {
+    dependencies {
+        classpath 'com.pascalwelsch.gitversioner:gitversioner:0.4.1'
+    }
+}
+
 plugins {
     id 'java'
     id 'java-library'
     id 'com.github.johnrengelman.shadow' version '4.0.2'
 }
-
-group 'dev.markusk'
-version gitVersioner.versionName
 
 sourceCompatibility = 1.11
 
@@ -19,11 +22,13 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+	maven {
+		url 'https://nexus.markusk.dev/repository/maven-public/'
+	}
 }
 
 dependencies {
-    //implementation project(':database-module')
-    implementation project(':fetcher-api')
+    compileOnly 'dev.markusk:fetcher-api:+'
 
     // https://mvnrepository.com/artifact/io.prometheus/simpleclient_httpserver
     implementation group: 'io.prometheus', name: 'simpleclient_httpserver', version: '0.8.1'
@@ -32,6 +37,26 @@ dependencies {
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
+
+// https://github.com/passsy/gradle-gitVersioner-plugin
+apply plugin: 'com.pascalwelsch.gitversioner'
+gitVersioner {
+    def base = System.getenv('base')
+    def snap = System.getenv('snap')
+    baseBranch base == null ? 'development' : base
+    def snapshot = snap == null ? true : snap != 'false'
+    addSnapshot snapshot
+
+    addLocalChangesDetails false
+    if (snapshot) {
+        formatter = { gitVersioner ->
+            return "${gitVersioner.currentSha1Short}-SNAPSHOT"
+        }
+    }
+}
+
+group 'dev.markusk'
+version gitVersioner.versionName
 
 processResources{
     filter(ReplaceTokens, tokens: [VERSION: version])
