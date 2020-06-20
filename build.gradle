@@ -22,13 +22,13 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
-	maven {
-		url 'https://nexus.markusk.dev/repository/maven-public/'
-	}
+    maven {
+        url 'https://nexus.markusk.dev/repository/maven-public/'
+    }
 }
 
 dependencies {
-    compileOnly 'dev.markusk:fetcher-api:+'
+    implementation 'dev.markusk:fetcher-api:+'
 
     // https://mvnrepository.com/artifact/io.prometheus/simpleclient_httpserver
     implementation group: 'io.prometheus', name: 'simpleclient_httpserver', version: '0.8.1'
@@ -58,7 +58,7 @@ gitVersioner {
 group 'dev.markusk'
 version gitVersioner.versionName
 
-processResources{
+processResources {
     filter(ReplaceTokens, tokens: [VERSION: version])
 }
 
