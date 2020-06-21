@@ -1,8 +1,8 @@
 package dev.markusk.bluelight.miner.manager;
 
-import dev.markusk.bluelight.api.extractor.DefaultExtractor;
 import dev.markusk.bluelight.api.interfaces.AbstractExtractorRegistry;
 import dev.markusk.bluelight.api.interfaces.Extractor;
+import dev.markusk.bluelight.miner.extractor.DefaultExtractor;
 
 import java.util.HashMap;
 

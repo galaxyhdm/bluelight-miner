@@ -50,7 +50,7 @@ public class DataRegistry implements AbstractDataRegistry {
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
       throw new RuntimeException(e);
     }
-    abstractDataManager.initialize(this.fetcher.getLogger(), settings);
+    abstractDataManager.initialize(this.fetcher.getLogger(), this.fetcher, settings);
     this.dataManagerMap.put(targetUid, abstractDataManager);
     return abstractDataManager;
   }

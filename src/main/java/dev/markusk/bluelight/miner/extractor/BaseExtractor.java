@@ -3,6 +3,8 @@ package dev.markusk.bluelight.miner.extractor;
 import dev.markusk.bluelight.api.interfaces.Extractor;
 import dev.markusk.bluelight.api.objects.Location;
 import dev.markusk.bluelight.api.objects.Topic;
+import dev.markusk.bluelight.miner.objects.LocationImpl;
+import dev.markusk.bluelight.miner.objects.TopicImpl;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -28,7 +30,7 @@ public class BaseExtractor implements Extractor {
     if (elements.isEmpty()) return null;
     try {
       elements.get(0).children().forEach(element -> {
-        final Location location = new Location();
+        final Location location = new LocationImpl();
         location.setLocationName(element.text().trim());
         locations.add(location);
       });
@@ -45,7 +47,7 @@ public class BaseExtractor implements Extractor {
     if (elements.isEmpty()) return null;
     try {
       elements.get(1).children().forEach(element -> {
-        final Topic topic = new Topic();
+        final Topic topic = new TopicImpl();
         topic.setTopicName(element.text().trim());
         topics.add(topic);
       });

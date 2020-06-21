@@ -1,13 +1,14 @@
 package dev.markusk.bluelight.miner.manager;
 
 import dev.markusk.bluelight.api.handler.JobHandler;
-import dev.markusk.bluelight.api.impl.FetcherJob;
 import dev.markusk.bluelight.api.interfaces.AbstractFetcherExecutor;
 import dev.markusk.bluelight.api.interfaces.AbstractFetcherRegistry;
 import dev.markusk.bluelight.api.interfaces.AbstractInfoFetcher;
+import dev.markusk.bluelight.api.job.FetcherJob;
 import dev.markusk.bluelight.miner.Constants;
 import dev.markusk.bluelight.miner.Environment;
 import dev.markusk.bluelight.miner.Miner;
+import dev.markusk.bluelight.miner.job.FetcherJobImpl;
 import io.prometheus.client.Histogram;
 
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class FetcherExecutor implements AbstractFetcherExecutor {
 
   @Override
   public void addJob(AbstractInfoFetcher infoFetcher) {
-    final FetcherJob fetcherJob = new FetcherJob(this.miner, infoFetcher, !Environment.NO_FETCH);
+    final FetcherJob fetcherJob = new FetcherJobImpl(this.miner, infoFetcher, !Environment.NO_FETCH);
     this.jobMap.put(infoFetcher.getTargetUid(), fetcherJob);
     this.registerHandler(fetcherJob);
     this.timer.schedule(fetcherJob, 100 * getRandomNumberInRange(1, 10),

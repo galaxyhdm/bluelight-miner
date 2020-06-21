@@ -3,9 +3,7 @@ package dev.markusk.bluelight.miner;
 import dev.markusk.bluelight.api.AbstractFetcher;
 import dev.markusk.bluelight.api.config.Configuration;
 import dev.markusk.bluelight.api.config.TargetConfiguration;
-import dev.markusk.bluelight.api.console.BetterSystemOut;
-import dev.markusk.bluelight.api.console.ConsoleController;
-import dev.markusk.bluelight.api.extractor.DefaultExtractor;
+import dev.markusk.bluelight.api.factory.ObjectFactory;
 import dev.markusk.bluelight.api.interfaces.*;
 import dev.markusk.bluelight.api.modules.Module;
 import dev.markusk.bluelight.api.modules.ModuleLoader;
@@ -13,6 +11,10 @@ import dev.markusk.bluelight.api.modules.ModuleManager;
 import dev.markusk.bluelight.api.util.TorValidator;
 import dev.markusk.bluelight.api.util.Utils;
 import dev.markusk.bluelight.miner.config.DataStore;
+import dev.markusk.bluelight.miner.console.BetterSystemOut;
+import dev.markusk.bluelight.miner.console.ConsoleController;
+import dev.markusk.bluelight.miner.extractor.DefaultExtractor;
+import dev.markusk.bluelight.miner.factory.ObjectFactoryImpl;
 import dev.markusk.bluelight.miner.manager.DataRegistry;
 import dev.markusk.bluelight.miner.manager.ExtractorRegistry;
 import dev.markusk.bluelight.miner.manager.FetcherExecutor;
@@ -61,6 +63,7 @@ public class Miner implements AbstractFetcher {
   private AbstractFetcherExecutor fetcherExecutor;
   private AbstractExtractorRegistry extractorRegistry;
   private AbstractDataRegistry dataRegistry;
+  private ObjectFactory objectFactory;
 
   //Data
   private AbstractUrlData urlData;
@@ -110,6 +113,7 @@ public class Miner implements AbstractFetcher {
       System.exit(20);
     }
 
+    this.objectFactory = new ObjectFactoryImpl();
     this.dataRegistry = new DataRegistry(this);
 
     this.moduleLoader = new ModuleLoader(this);
@@ -271,6 +275,11 @@ public class Miner implements AbstractFetcher {
   @Override
   public TargetConfiguration getTargetConfiguration(final String targetUid) {
     return this.configuration.getTargets().get(targetUid);
+  }
+
+  @Override
+  public ObjectFactory getObjectFactory() {
+    return this.objectFactory;
   }
 
   @Override

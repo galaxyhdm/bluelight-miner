@@ -1,8 +1,8 @@
 package dev.markusk.bluelight.miner.queue;
 
 import dev.markusk.bluelight.api.interfaces.AbstractScheduler;
-import dev.markusk.bluelight.api.job.AbstractImportJob;
 import dev.markusk.bluelight.api.job.AbstractJob;
+import dev.markusk.bluelight.api.job.ImportJob;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +37,7 @@ public class ImportScheduler implements AbstractScheduler {
 
   @Override
   public void scheduleJob(final AbstractJob job) {
-    if (!(job instanceof AbstractImportJob)) throw new IllegalArgumentException("Job is not a ImportJob");
+    if (!(job instanceof ImportJob)) throw new IllegalArgumentException("Job is not a ImportJob");
     this.priorityQueue.add(job);
   }
 
