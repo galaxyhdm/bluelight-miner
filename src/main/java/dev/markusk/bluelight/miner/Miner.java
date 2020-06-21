@@ -10,6 +10,7 @@ import dev.markusk.bluelight.api.modules.ModuleLoader;
 import dev.markusk.bluelight.api.modules.ModuleManager;
 import dev.markusk.bluelight.api.util.TorValidator;
 import dev.markusk.bluelight.api.util.Utils;
+import dev.markusk.bluelight.miner.config.ConfigurationImpl;
 import dev.markusk.bluelight.miner.config.DataStore;
 import dev.markusk.bluelight.miner.console.BetterSystemOut;
 import dev.markusk.bluelight.miner.console.ConsoleController;
@@ -189,10 +190,10 @@ public class Miner implements AbstractFetcher {
   }
 
   private Configuration loadConfig() {
-    Constructor constructor = new Constructor(Configuration.class);
+    Constructor constructor = new Constructor(ConfigurationImpl.class);
     final Yaml yaml = new Yaml(constructor);
     try (FileInputStream inputStream = new FileInputStream(new File("config.yml"))) {
-      final Configuration load = yaml.loadAs(inputStream, Configuration.class);
+      final Configuration load = yaml.loadAs(inputStream, ConfigurationImpl.class);
       if (load != null) return load;
     } catch (Exception e) {
       throw new RuntimeException(e);
