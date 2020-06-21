@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'dev.markusk:fetcher-api:349'
+    implementation 'dev.markusk:fetcher-api:+'
 
     // https://mvnrepository.com/artifact/io.prometheus/simpleclient_httpserver
     implementation group: 'io.prometheus', name: 'simpleclient_httpserver', version: '0.8.1'

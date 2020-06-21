@@ -1,7 +1,7 @@
 package dev.markusk.bluelight.miner.config;
 
 import dev.markusk.bluelight.api.config.Configuration;
-import dev.markusk.bluelight.api.config.TargetConfiguration;
+import dev.markusk.bluelight.api.config.TargetConfigurationImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class ConfigurationImpl implements Configuration {
 
   private String moduleFolder;
-  private Map<String, TargetConfiguration> targets;
+  private Map<String, TargetConfigurationImpl> targets;
   private List<String> userAgents;
 
   @Override
@@ -23,12 +23,12 @@ public class ConfigurationImpl implements Configuration {
   }
 
   @Override
-  public Map<String, TargetConfiguration> getTargets() {
+  public Map<String, TargetConfigurationImpl> getTargets() {
     return targets;
   }
 
   @Override
-  public void setTargets(final Map<String, TargetConfiguration> targets) {
+  public void setTargets(final Map<String, TargetConfigurationImpl> targets) {
     this.targets = targets;
   }
 
