@@ -23,7 +23,7 @@ jobs:
     - name: Set git version
       run: echo '::set-env name=GIT_VERSION::'$(gradle getGitVersion -q)
       env:
-        BASE: development
+        BASE: master
         SNAP: false
 
     - name: Get git version
