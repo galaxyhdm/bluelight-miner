@@ -22,6 +22,10 @@ jobs:
 
     - name: Set git version
       run: echo '::set-env name=GIT_VERSION::'$(SNAP=false gradle getGitVersion -q)
+      env:
+        BASE: development
+        SNAP: false
+
     - name: Get git version
       run: echo 'The git version is ' $GIT_VERSION
 
@@ -31,6 +35,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: markusk00/miner
-          tags: development, $GIT_VERSION
+          tags: development, ${{ env.GIT_VERSION }}
           tag_with_sha: true
           build_args: SNAPSHOT=true, BASE=development
