@@ -21,7 +21,7 @@ jobs:
         java-package: jdk
 
     - name: Set git version
-      run: echo '::set-env name=GIT_VERSION::'$(SNAP=false gradle getGitVersion -q)
+      run: echo '::set-env name=GIT_VERSION::'$(gradle getGitVersion -q)
       env:
         BASE: development
         SNAP: false
