@@ -14,12 +14,23 @@ jobs:
       with:
           fetch-depth: 0
 
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.11
+        java-package: jdk
+
+    - name: Set git version
+      run: echo '::set-env name=$GIT_VERSION::'$(SNAP=false gradle getGitVersion -q)
+    - name: Get git version
+      run: echo 'The git version is ' $GIT_VERSION
+
     - name: Build and push Docker images
       uses: docker/build-push-action@v1.1.0
       with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: markusk00/miner
-          tags: development
+          tags: development, $GIT_VERSION
           tag_with_sha: true
           build_args: SNAPSHOT=true, BASE=development
