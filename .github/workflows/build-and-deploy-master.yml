@@ -8,32 +8,44 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SNAPSHOT: false
 
     steps:
-    - uses: actions/checkout@v2
-      with:
+      - name: Extract branch name
+        shell: bash
+        run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - uses: actions/checkout@v2
+        with:
           fetch-depth: 0
 
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.11
-        java-package: jdk
+      - name: Lint Code Base
+        uses: docker://github/super-linter:v2.2.0
+        env:
+          VALIDATE_ALL_CODEBASE: false
 
-    - name: Set git version
-      run: echo '::set-env name=GIT_VERSION::'$(gradle getGitVersion -q)
-      env:
-        BASE: master
-        SNAP: false
+      - name: Set up JDK 14
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+          java-package: jdk
 
-    - name: Get git version
-      run: echo 'The git version is ' $GIT_VERSION
+      - name: Set git version
+        run: echo '::set-env name=GIT_VERSION::'$(gradle getGitVersion -q)
+        env:
+          BASE: ${{ steps.extract_branch.outputs.branch }}
+          SNAP: ${{ env.SNAPSHOT }}
 
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v1.1.0
-      with:
+      - name: Get git version
+        run: echo 'The git version is ' $GIT_VERSION
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1.1.0
+        with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: markusk00/miner
           tags: latest, ${{ env.GIT_VERSION }}
-          build_args: SNAPSHOT=false, BASE=master
+          build_args: SNAPSHOT=${{ env.SNAPSHOT }}, BASE=${{ steps.extract_branch.outputs.branch }}
