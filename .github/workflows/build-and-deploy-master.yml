@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build:
+  master:
     runs-on: ubuntu-latest
     env:
       SNAPSHOT: false
@@ -25,7 +25,8 @@ jobs:
         uses: docker://github/super-linter:v2.2.0
         env:
           VALIDATE_ALL_CODEBASE: false
-
+          VALIDATE_BASH: false
+          
       - name: Set up JDK 14
         uses: actions/setup-java@v1
         with:
