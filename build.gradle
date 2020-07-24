@@ -48,8 +48,8 @@ dependencies {
 // https://github.com/passsy/gradle-gitVersioner-plugin
 apply plugin: 'com.pascalwelsch.gitversioner'
 gitVersioner {
-    def base = "$System.env.BASE"
-    def snap = "$System.env.SNAP"
+    def base = System.getenv('base')
+    def snap = System.getenv('snap')
     baseBranch base == null ? 'development' : base
     def snapshot = snap == null ? true : snap != 'false'
     addSnapshot snapshot
