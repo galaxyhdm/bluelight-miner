@@ -4,8 +4,8 @@ FROM gradle:jdk14 AS build
 ARG SNAPSHOT=true
 ARG BASE=development
 
-ENV snap $SNAPSHOT
-ENV base $BASE
+ENV SNAP $SNAPSHOT
+ENV BASE $BASE
 
 #### BUILD JAR ####
 WORKDIR /app
