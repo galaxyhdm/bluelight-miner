@@ -20,10 +20,10 @@ targets:
     # - 6 = topic + content
     # - 7 = location + topic + content
     indexType: 7
-    # Defines the extractor in the class path. Default: dev.markusk.bluelight.api.extractor.DefaultExtractor
-    extractorPath: dev.markusk.bluelight.api.extractor.DefaultExtractor
+    # Defines the extractor in the class path. Default: dev.markusk.bluelight.miner.extractor.DefaultExtractor
+    extractorPath: dev.markusk.bluelight.miner.extractor.DefaultExtractor
     # Defines the fetcher path.
-    fetcherPath: dev.markusk.bluelight.api.impl.RssFetcher
+    fetcherPath: dev.markusk.bluelight.miner.impl.RssFetcher
     # Defines the work-dir (the path for the downloaded articles)
     workDir: target_name/
     # Defines the suffix for the article-files
