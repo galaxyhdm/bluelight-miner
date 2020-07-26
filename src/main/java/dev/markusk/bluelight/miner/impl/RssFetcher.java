@@ -2,7 +2,6 @@ package dev.markusk.bluelight.miner.impl;
 
 import com.apptastic.rssreader.Item;
 import com.apptastic.rssreader.RssReader;
-import dev.markusk.bluelight.api.builder.BaseFetchInfoBuilder;
 import dev.markusk.bluelight.api.interfaces.AbstractInfoFetcher;
 import dev.markusk.bluelight.api.interfaces.BaseFetchInfo;
 import dev.markusk.bluelight.miner.builder.BaseFetchInfoBuilderImpl;

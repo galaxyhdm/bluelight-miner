@@ -44,3 +44,13 @@ jobs:
           repository: markusk00/miner
           tags: latest,${{ env.GIT_VERSION }}
           build_args: snapshot_build=${{ env.SNAPSHOT }},base_ref=${{ steps.extract_branch.outputs.branch }}
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.GIT_VERSION }}
+          release_name: Release ${{ env.GIT_VERSION }}
+          draft: false
+          prerelease: false
