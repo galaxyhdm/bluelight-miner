@@ -28,5 +28,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: markusk00/miner
           tags: development
-          tag_with_sha: true
-          build_args: SNAPSHOT=${{ env.SNAPSHOT }}, BASE=${{ steps.extract_branch.outputs.branch }}
+          build_args: snapshot_build=${{ env.SNAPSHOT }},base_ref=${{ steps.extract_branch.outputs.branch }}

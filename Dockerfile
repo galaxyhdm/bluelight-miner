@@ -1,21 +1,19 @@
 # Stage 1: Build binaries
 FROM gradle:jdk14 AS build
 
-ARG SNAPSHOT=true
-ARG BASE=development
-
-ENV SNAP $SNAPSHOT
-ENV BASE_BRANCH $BASE
+# Set build-args
+ARG snapshot_build=true
+ARG base_ref=development
 
 #### BUILD JAR ####
 WORKDIR /app
 ADD . .
-RUN gradle build
+RUN gradle build -Dbase_branch=$base_ref -Dsnapshot=$snapshot_build
 
 # Stage 2: Final binaries and final setup
 FROM markusk00/jdk-tor:latest AS final
 
-#Set Env variables
+# Set Env variables
 ENV DEBUG false
 ENV POOL_SIZE 2
 

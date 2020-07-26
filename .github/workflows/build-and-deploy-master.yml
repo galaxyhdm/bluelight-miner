@@ -30,11 +30,11 @@ jobs:
       - name: Set git version
         run: echo '::set-env name=GIT_VERSION::'$(gradle getGitVersion -q)
         env:
-          BASE: ${{ steps.extract_branch.outputs.branch }}
+          BASE_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           SNAP: ${{ env.SNAPSHOT }}
 
       - name: Get git version
-        run: echo 'The git version is ' $GIT_VERSION
+        run: echo 'The git version is '$GIT_VERSION
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v1.1.0
@@ -42,5 +42,5 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: markusk00/miner
-          tags: latest, ${{ env.GIT_VERSION }}
-          build_args: SNAPSHOT=${{ env.SNAPSHOT }}, BASE=${{ steps.extract_branch.outputs.branch }}
+          tags: latest,${{ env.GIT_VERSION }}
+          build_args: snapshot_build=${{ env.SNAPSHOT }},base_ref=${{ steps.extract_branch.outputs.branch }}
